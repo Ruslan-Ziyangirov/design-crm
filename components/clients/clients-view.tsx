@@ -18,7 +18,7 @@ import {
 import { ClientFormDialog } from "@/components/clients/client-form-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatMoney, formatDate } from "@/lib/format";
-import { calcProfit, calcRemainder } from "@/lib/calculations";
+import { calcProfit } from "@/lib/calculations";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import type { Client, Source, Order } from "@/lib/db/schema";
 
@@ -110,10 +110,9 @@ export function ClientsView({ clients }: { clients: ClientRow[] }) {
             const calcOrders = c.orders.map((o) => ({
               paymentReceived: o.paymentReceived,
               expenses: o.expenses,
-              price: o.price,
+              profitOverride: o.profitOverride,
             }));
-            const profit = calcOrders.reduce((s, o) => s + calcProfit({ price: o.price, paymentReceived: o.paymentReceived, expenses: o.expenses }), 0);
-            const debt = calcOrders.reduce((s, o) => s + calcRemainder({ price: o.price, paymentReceived: o.paymentReceived, expenses: o.expenses }), 0);
+            const profit = calcOrders.reduce((s, o) => s + calcProfit(o), 0);
 
             return (
               <Link key={c.id} href={`/clients/${c.id}`}>
@@ -126,7 +125,7 @@ export function ClientsView({ clients }: { clients: ClientRow[] }) {
                     <Badge variant={STATUS_VARIANT[c.status]}>{STATUS_LABELS[c.status]}</Badge>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-center">
                     <div>
                       <p className="font-numeric text-[13px] font-semibold text-[var(--color-ink)]">{c.orders.length}</p>
                       <p className="text-[10.5px] text-[var(--color-ink-faint)]">заказов</p>
@@ -134,12 +133,6 @@ export function ClientsView({ clients }: { clients: ClientRow[] }) {
                     <div>
                       <p className="font-numeric text-[13px] font-semibold text-[var(--color-positive)]">{formatMoney(profit)}</p>
                       <p className="text-[10.5px] text-[var(--color-ink-faint)]">прибыль</p>
-                    </div>
-                    <div>
-                      <p className={`font-numeric text-[13px] font-semibold ${debt > 0 ? "text-[var(--color-warning)]" : "text-[var(--color-ink-faint)]"}`}>
-                        {formatMoney(debt)}
-                      </p>
-                      <p className="text-[10.5px] text-[var(--color-ink-faint)]">долг</p>
                     </div>
                   </div>
 

@@ -78,7 +78,6 @@ export async function POST(req: NextRequest) {
           userId,
           clientId: client.id,
           title: row.title,
-          price: row.revenue,
           paymentReceived: row.revenue,
           expenses: row.expenses,
           statusId: status.id,

@@ -1,7 +1,7 @@
 import { formatDate } from "@/lib/format";
 import type { OrderWithRelations } from "@/lib/db/queries";
 import type { Client, Source } from "@/lib/db/schema";
-import { calcProfit, calcRemainder } from "@/lib/calculations";
+import { calcProfit } from "@/lib/calculations";
 
 export function buildClientRows(clients: (Client & { source: Source | null })[]) {
   return clients.map((c) => ({
@@ -26,12 +26,9 @@ export function buildOrderRows(orders: OrderWithRelations[]) {
     Заказ: o.title,
     Клиент: o.client?.name ?? "",
     Услуга: o.serviceType?.name ?? "",
-    Стоимость: o.price,
-    Предоплата: o.prepaymentReceived,
-    Получено: o.paymentReceived,
+    Выручка: o.paymentReceived,
     Расходы: o.expenses,
     Прибыль: calcProfit(o),
-    Остаток: calcRemainder(o),
     "Статус проекта": o.status?.name ?? "",
     "Статус оплаты": o.paymentStatus?.name ?? "",
     "Откуда пришёл": o.source?.name ?? "",

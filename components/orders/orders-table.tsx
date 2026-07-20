@@ -32,12 +32,12 @@ import {
 import { MoreHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, Copy, Trash2, Archive, Pencil } from "lucide-react";
 import { StatusBadge } from "@/components/orders/status-badge";
 import { formatMoney, formatDate } from "@/lib/format";
-import { calcProfit, calcRemainder, isOverdue } from "@/lib/calculations";
+import { calcProfit, isOverdue } from "@/lib/calculations";
 import { cn } from "@/lib/utils";
 import type { OrderWithRelations } from "@/lib/db/queries";
 import type { OrdersFilters } from "@/components/orders/orders-view";
 
-type SortKey = "title" | "client" | "price" | "paymentReceived" | "profit" | "remainder" | "deadline" | "createdAt";
+type SortKey = "title" | "client" | "paymentReceived" | "profit" | "deadline" | "createdAt";
 
 const PAGE_SIZE = 20;
 
@@ -69,14 +69,10 @@ export function OrdersTable({
           av = a.title; bv = b.title; break;
         case "client":
           av = a.client?.name ?? ""; bv = b.client?.name ?? ""; break;
-        case "price":
-          av = a.price; bv = b.price; break;
         case "paymentReceived":
           av = a.paymentReceived; bv = b.paymentReceived; break;
         case "profit":
           av = calcProfit(a); bv = calcProfit(b); break;
-        case "remainder":
-          av = calcRemainder(a); bv = calcRemainder(b); break;
         case "deadline":
           av = a.deadline ? new Date(a.deadline).getTime() : 0; bv = b.deadline ? new Date(b.deadline).getTime() : 0; break;
         case "createdAt":
@@ -185,9 +181,9 @@ export function OrdersTable({
   function exportSelected() {
     const ids = new Set(selected);
     const rows = orders.filter((o) => ids.has(o.id));
-    const header = ["Заказ", "Клиент", "Стоимость", "Получено", "Прибыль", "Остаток", "Статус"];
+    const header = ["Заказ", "Клиент", "Выручка", "Расход", "Прибыль", "Статус"];
     const csvRows = rows.map((o) =>
-      [o.title, o.client?.name ?? "", o.price, o.paymentReceived, calcProfit(o), calcRemainder(o), o.status?.name ?? ""]
+      [o.title, o.client?.name ?? "", o.paymentReceived, o.expenses, calcProfit(o), o.status?.name ?? ""]
         .map((v) => `"${String(v).replace(/"/g, '""')}"`)
         .join(","),
     );
@@ -243,11 +239,9 @@ export function OrdersTable({
                 <TableHead><SortButton label="Заказ" sortKeyValue="title" /></TableHead>
                 <TableHead><SortButton label="Клиент" sortKeyValue="client" /></TableHead>
                 <TableHead>Услуга</TableHead>
-                <TableHead className="text-right"><SortButton label="Стоимость" sortKeyValue="price" /></TableHead>
-                <TableHead className="text-right"><SortButton label="Получено" sortKeyValue="paymentReceived" /></TableHead>
-                <TableHead className="text-right">Расходы</TableHead>
+                <TableHead className="text-right"><SortButton label="Выручка" sortKeyValue="paymentReceived" /></TableHead>
+                <TableHead className="text-right">Расход</TableHead>
                 <TableHead className="text-right"><SortButton label="Прибыль" sortKeyValue="profit" /></TableHead>
-                <TableHead className="text-right"><SortButton label="Остаток" sortKeyValue="remainder" /></TableHead>
                 <TableHead>Отзыв</TableHead>
                 <TableHead>Статус</TableHead>
                 <TableHead>Оплата</TableHead>
@@ -261,7 +255,7 @@ export function OrdersTable({
                 <Fragment key={`grp-${group.key}`}>
                   {group.label && (
                     <TableRow key={`g-${group.key}`} className="bg-black/[0.02] hover:bg-black/[0.02]">
-                      <TableCell colSpan={14} className="py-1.5 text-[12px] font-semibold text-[var(--color-ink-muted)]">
+                      <TableCell colSpan={12} className="py-1.5 text-[12px] font-semibold text-[var(--color-ink-muted)]">
                         {group.label} · {group.rows.length} заказ(ов) ·{" "}
                         {formatMoney(group.rows.reduce((s, o) => s + o.paymentReceived, 0))}
                       </TableCell>
@@ -283,7 +277,6 @@ export function OrdersTable({
                           {o.client?.name ?? "—"}
                         </TableCell>
                         <TableCell className="text-[var(--color-ink-muted)]">{o.serviceType?.name ?? "—"}</TableCell>
-                        <TableCell className="text-right font-numeric">{formatMoney(o.price)}</TableCell>
                         <TableCell className="text-right font-numeric">{formatMoney(o.paymentReceived)}</TableCell>
                         <TableCell className="text-right font-numeric text-[var(--color-ink-muted)]">{formatMoney(o.expenses)}</TableCell>
                         <TableCell
@@ -294,7 +287,6 @@ export function OrdersTable({
                         >
                           {formatMoney(calcProfit(o))}
                         </TableCell>
-                        <TableCell className="text-right font-numeric">{formatMoney(calcRemainder(o))}</TableCell>
                         <TableCell>
                           {o.reviewReceived ? (
                             <Badge variant="positive">Есть</Badge>

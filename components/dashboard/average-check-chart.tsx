@@ -15,8 +15,8 @@ export function AverageCheckChart({ data }: { data: { label: string; averageChec
           <AreaChart data={data} margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="avgCheckGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0f6e5c" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="#0f6e5c" stopOpacity={0} />
+                <stop offset="0%" stopColor="#ff3c00" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="#ff3c00" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
@@ -37,7 +37,7 @@ export function AverageCheckChart({ data }: { data: { label: string; averageChec
                 fontSize: 12,
               }}
             />
-            <Area type="monotone" dataKey="averageCheck" stroke="#0f6e5c" strokeWidth={2} fill="url(#avgCheckGradient)" />
+            <Area type="monotone" dataKey="averageCheck" stroke="#ff3c00" strokeWidth={2} fill="url(#avgCheckGradient)" />
           </AreaChart>
         </ResponsiveContainer>
       </CardContent>

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { ProjectStatus } from "@/lib/db/schema";
 
-const PALETTE = ["#64748b", "#2563eb", "#c8850f", "#7c5cbf", "#ea580c", "#1c8a5a", "#d33a2c", "#94a3b8", "#0f6e5c", "#6b7280"];
+const PALETTE = ["#64748b", "#2563eb", "#c8850f", "#7c5cbf", "#ea580c", "#1c8a5a", "#d33a2c", "#94a3b8", "#ff3c00", "#6b7280"];
 
 const CATEGORY_LABELS: Record<string, string> = {
   active: "В работе (влияет на активные проекты)",

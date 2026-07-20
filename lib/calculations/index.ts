@@ -9,9 +9,9 @@
 export type OrderStatusCategory = "active" | "done" | "cancelled" | "archived";
 
 export interface OrderFinancials {
-  price: number;
   paymentReceived: number;
   expenses: number;
+  profitOverride?: number | null;
 }
 
 export interface OrderForCalc extends OrderFinancials {
@@ -27,14 +27,10 @@ export interface OrderForCalc extends OrderFinancials {
   sourceId: string | null;
 }
 
-/** Прибыль = полученная оплата − расходы. Не редактируется вручную. */
-export function calcProfit({ paymentReceived, expenses }: OrderFinancials): number {
+/** Прибыль = ручной override, если указан, иначе полученная оплата − расходы. */
+export function calcProfit({ paymentReceived, expenses, profitOverride }: OrderFinancials): number {
+  if (profitOverride !== undefined && profitOverride !== null) return round2(profitOverride);
   return round2(paymentReceived - expenses);
-}
-
-/** Остаток к оплате = стоимость проекта − полученная оплата. */
-export function calcRemainder({ price, paymentReceived }: OrderFinancials): number {
-  return round2(price - paymentReceived);
 }
 
 /** Рентабельность (маржинальность) = прибыль / выручка * 100. */
@@ -83,25 +79,24 @@ export interface AggregatedFinancials {
   orderCount: number;
   averageCheck: number;
   margin: number;
-  outstanding: number; // сумма к доплате по неотменённым заказам
 }
 
 /** Агрегирует финансовые показатели по набору заказов (исключая отменённые из выручки/прибыли). */
 export function aggregateOrders(orders: OrderForCalc[]): AggregatedFinancials {
   let revenue = 0;
   let expenses = 0;
-  let outstanding = 0;
+  let profit = 0;
   let counted = 0;
 
   for (const o of orders) {
     if (isExcludedFromRevenue(o)) continue;
     revenue += o.paymentReceived;
     expenses += o.expenses;
-    outstanding += calcRemainder(o);
+    profit += calcProfit(o);
     counted += 1;
   }
 
-  const profit = round2(revenue - expenses);
+  profit = round2(profit);
 
   return {
     revenue: round2(revenue),
@@ -110,7 +105,6 @@ export function aggregateOrders(orders: OrderForCalc[]): AggregatedFinancials {
     orderCount: counted,
     averageCheck: calcAverageCheck(revenue, counted),
     margin: calcMargin(revenue, profit),
-    outstanding: round2(outstanding),
   };
 }
 

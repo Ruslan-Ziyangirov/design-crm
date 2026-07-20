@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   calcProfit,
-  calcRemainder,
   calcMargin,
   calcAverageCheck,
   calcChangePercent,
@@ -18,7 +17,6 @@ function makeOrder(overrides: Partial<OrderForCalc> = {}): OrderForCalc {
   return {
     id: crypto.randomUUID(),
     statusId: "status-done",
-    price: 100000,
     paymentReceived: 100000,
     expenses: 20000,
     statusCategory: "done",
@@ -35,21 +33,20 @@ function makeOrder(overrides: Partial<OrderForCalc> = {}): OrderForCalc {
 
 describe("calcProfit", () => {
   it("считает прибыль как оплату минус расходы", () => {
-    expect(calcProfit({ price: 0, paymentReceived: 100000, expenses: 30000 })).toBe(70000);
+    expect(calcProfit({ paymentReceived: 100000, expenses: 30000 })).toBe(70000);
   });
 
   it("допускает отрицательную прибыль, если расходы больше оплаты", () => {
-    expect(calcProfit({ price: 0, paymentReceived: 10000, expenses: 25000 })).toBe(-15000);
-  });
-});
-
-describe("calcRemainder", () => {
-  it("считает остаток как стоимость минус оплата", () => {
-    expect(calcRemainder({ price: 100000, paymentReceived: 40000, expenses: 0 })).toBe(60000);
+    expect(calcProfit({ paymentReceived: 10000, expenses: 25000 })).toBe(-15000);
   });
 
-  it("возвращает 0, если оплачено полностью", () => {
-    expect(calcRemainder({ price: 50000, paymentReceived: 50000, expenses: 0 })).toBe(0);
+  it("использует ручной override вместо авторасчёта, если он задан", () => {
+    expect(calcProfit({ paymentReceived: 100000, expenses: 30000, profitOverride: 50000 })).toBe(50000);
+  });
+
+  it("игнорирует null/undefined override и считает автоматически", () => {
+    expect(calcProfit({ paymentReceived: 100000, expenses: 30000, profitOverride: null })).toBe(70000);
+    expect(calcProfit({ paymentReceived: 100000, expenses: 30000, profitOverride: undefined })).toBe(70000);
   });
 });
 
@@ -129,9 +126,9 @@ describe("isExcludedFromRevenue", () => {
 describe("aggregateOrders", () => {
   it("считает агрегаты и исключает отменённые заказы из выручки/прибыли", () => {
     const orders = [
-      makeOrder({ price: 100000, paymentReceived: 100000, expenses: 20000, statusCategory: "done" }),
-      makeOrder({ price: 50000, paymentReceived: 50000, expenses: 10000, statusCategory: "done" }),
-      makeOrder({ price: 200000, paymentReceived: 0, expenses: 5000, statusCategory: "cancelled" }),
+      makeOrder({ paymentReceived: 100000, expenses: 20000, statusCategory: "done" }),
+      makeOrder({ paymentReceived: 50000, expenses: 10000, statusCategory: "done" }),
+      makeOrder({ paymentReceived: 0, expenses: 5000, statusCategory: "cancelled" }),
     ];
     const result = aggregateOrders(orders);
     expect(result.revenue).toBe(150000);
@@ -142,13 +139,13 @@ describe("aggregateOrders", () => {
     expect(result.margin).toBe(80);
   });
 
-  it("считает задолженность (остаток) только по неотменённым заказам", () => {
+  it("учитывает ручной override прибыли отдельных заказов в агрегате", () => {
     const orders = [
-      makeOrder({ price: 100000, paymentReceived: 40000, expenses: 0, statusCategory: "active" }),
-      makeOrder({ price: 200000, paymentReceived: 0, expenses: 0, statusCategory: "cancelled" }),
+      makeOrder({ paymentReceived: 100000, expenses: 20000, profitOverride: 90000, statusCategory: "done" }),
+      makeOrder({ paymentReceived: 50000, expenses: 10000, statusCategory: "done" }),
     ];
     const result = aggregateOrders(orders);
-    expect(result.outstanding).toBe(60000);
+    expect(result.profit).toBe(90000 + 40000);
   });
 
   it("возвращает нули для пустого списка", () => {
@@ -189,13 +186,13 @@ describe("findBestMonths", () => {
         key: "2026-01",
         label: "Январь 2026",
         newClients: 2,
-        financials: { revenue: 100000, expenses: 20000, profit: 80000, orderCount: 2, averageCheck: 50000, margin: 80, outstanding: 0 },
+        financials: { revenue: 100000, expenses: 20000, profit: 80000, orderCount: 2, averageCheck: 50000, margin: 80 },
       },
       {
         key: "2026-02",
         label: "Февраль 2026",
         newClients: 5,
-        financials: { revenue: 300000, expenses: 250000, profit: 50000, orderCount: 5, averageCheck: 60000, margin: 16.67, outstanding: 0 },
+        financials: { revenue: 300000, expenses: 250000, profit: 50000, orderCount: 5, averageCheck: 60000, margin: 16.67 },
       },
     ];
     const best = findBestMonths(buckets);

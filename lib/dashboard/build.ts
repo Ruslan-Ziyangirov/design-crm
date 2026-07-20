@@ -109,7 +109,6 @@ export function buildDashboard({
 
   const activeProjects = orders.filter((o) => o.statusCategory === "active").length;
   const overdueProjects = orders.filter((o) => isOverdue(o, now)).length;
-  const outstanding = aggregateOrders(orders.filter((o) => o.statusCategory !== "cancelled")).outstanding;
 
   const kpis = {
     revenue: { value: current.revenue, change: calcChangePercent(current.revenue, previous.revenue) },
@@ -119,7 +118,6 @@ export function buildDashboard({
     averageCheck: { value: current.averageCheck, change: calcChangePercent(current.averageCheck, previous.averageCheck) },
     margin: { value: current.margin, change: calcChangePercent(current.margin, previous.margin) },
     activeProjects: { value: activeProjects, change: null as number | null },
-    outstanding: { value: outstanding, change: null as number | null },
     newClients: { value: newClientsCurrent, change: calcChangePercent(newClientsCurrent, newClientsPrevious) },
     completedProjects: { value: completedCurrent, change: calcChangePercent(completedCurrent, completedPrevious) },
     overdueProjects: { value: overdueProjects, change: null as number | null },

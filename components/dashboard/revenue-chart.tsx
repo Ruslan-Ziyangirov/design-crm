@@ -40,8 +40,8 @@ export function RevenueChart({ data }: { data: Point[] }) {
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             <Line type="monotone" dataKey="revenue" name="Выручка" stroke="#2563eb" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="expenses" name="Расходы" stroke="#d33a2c" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="profit" name="Прибыль" stroke="#0f6e5c" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="expenses" name="Расходы" stroke="#e11d48" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="profit" name="Прибыль" stroke="#1c8a5a" strokeWidth={2.5} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

@@ -23,7 +23,7 @@ export function OrdersCountChart({ data }: { data: { label: string; count: numbe
                 fontSize: 12,
               }}
             />
-            <Bar dataKey="count" name="Заказы" fill="#2fa88d" radius={[6, 6, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="count" name="Заказы" fill="#ff3c00" radius={[6, 6, 0, 0]} maxBarSize={28} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

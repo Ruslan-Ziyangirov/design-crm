@@ -19,8 +19,6 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         title: `${original.title} (копия)`,
         serviceTypeId: original.serviceTypeId,
         description: original.description,
-        price: original.price,
-        prepaymentReceived: 0,
         paymentReceived: 0,
         expenses: 0,
         statusId: original.statusId,

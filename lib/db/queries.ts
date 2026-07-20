@@ -83,9 +83,9 @@ export async function getClientDetail(userId: string, clientId: string) {
 export function toCalcOrder(o: {
   id: string;
   statusId: string;
-  price: number;
   paymentReceived: number;
   expenses: number;
+  profitOverride: number | null;
   deadline: Date | null;
   createdAt: Date;
   completedDate: Date | null;
@@ -98,9 +98,9 @@ export function toCalcOrder(o: {
   return {
     id: o.id,
     statusId: o.statusId,
-    price: o.price,
     paymentReceived: o.paymentReceived,
     expenses: o.expenses,
+    profitOverride: o.profitOverride,
     statusCategory: o.status.category,
     deadline: o.deadline,
     createdAt: o.createdAt,

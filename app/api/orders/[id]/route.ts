@@ -25,8 +25,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const body = await req.json();
     const parsed = orderSchema.partial().parse(body);
 
+    // Пишем только поля, реально присутствовавшие в теле запроса — иначе
+    // Zod подставляет .default() для полей вроде paymentReceived/expenses,
+    // которых не было в запросе (например, при частичном PATCH из Канбана),
+    // и они затирают реальные значения в БД нулями.
     const updateData: Record<string, unknown> = { updatedAt: new Date() };
-    for (const [key, value] of Object.entries(parsed)) {
+    for (const key of Object.keys(body)) {
+      if (!(key in parsed)) continue;
+      const value = parsed[key as keyof typeof parsed];
       if (key === "tags") updateData.tags = JSON.stringify(value ?? []);
       else updateData[key] = value;
     }

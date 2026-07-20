@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "profit_override" double precision;

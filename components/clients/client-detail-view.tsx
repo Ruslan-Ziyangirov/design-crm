@@ -58,9 +58,9 @@ export function ClientDetailView({ client }: Props) {
   const calcOrders = client.orders.map((o) => ({
     id: o.id,
     statusId: o.statusId,
-    price: o.price,
     paymentReceived: o.paymentReceived,
     expenses: o.expenses,
+    profitOverride: o.profitOverride,
     statusCategory: (o.status?.category ?? "active") as "active" | "done" | "cancelled" | "archived",
     deadline: o.deadline ? new Date(o.deadline) : null,
     createdAt: new Date(o.createdAt),
@@ -114,7 +114,7 @@ export function ClientDetailView({ client }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-[12px] text-[var(--color-ink-muted)]">Всего заказов</p>
           <p className="mt-1 font-numeric text-[19px] font-semibold">{client.orders.length}</p>
@@ -126,12 +126,6 @@ export function ClientDetailView({ client }: Props) {
         <Card className="p-4">
           <p className="text-[12px] text-[var(--color-ink-muted)]">Прибыль</p>
           <p className="mt-1 font-numeric text-[19px] font-semibold text-[var(--color-positive)]">{formatMoney(agg.profit)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-[12px] text-[var(--color-ink-muted)]">Задолженность</p>
-          <p className={`mt-1 font-numeric text-[19px] font-semibold ${agg.outstanding > 0 ? "text-[var(--color-warning)]" : ""}`}>
-            {formatMoney(agg.outstanding)}
-          </p>
         </Card>
       </div>
 
@@ -241,7 +235,7 @@ export function ClientDetailView({ client }: Props) {
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <div className="text-right">
-                      <p className="font-numeric text-[13px] font-semibold">{formatMoney(o.price)}</p>
+                      <p className="font-numeric text-[13px] font-semibold">{formatMoney(o.paymentReceived)}</p>
                       <p
                         className={`font-numeric text-[11px] ${calcProfit(o) >= 0 ? "text-[var(--color-positive)]" : "text-[var(--color-negative)]"}`}
                       >

@@ -26,7 +26,7 @@ interface SearchClient {
 interface SearchOrder {
   id: string;
   title: string;
-  price: number;
+  paymentReceived: number;
   client: { id: string; name: string } | null;
 }
 
@@ -132,7 +132,7 @@ export function Topbar() {
                       {o.title}
                       {o.client && <span className="ml-2 text-[var(--color-ink-faint)]">{o.client.name}</span>}
                     </span>
-                    <span className="font-numeric text-[var(--color-ink-muted)]">{formatMoney(o.price)}</span>
+                    <span className="font-numeric text-[var(--color-ink-muted)]">{formatMoney(o.paymentReceived)}</span>
                   </Link>
                 ))}
               </div>

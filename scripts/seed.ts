@@ -191,10 +191,9 @@ async function main() {
     title: string;
     service: string;
     source: string;
-    price: number;
     paid: number;
-    prepay: number;
     expenses: number;
+    profitOverride?: number;
     status: string;
     payStatus: string;
     monthsAgo: number;
@@ -204,34 +203,34 @@ async function main() {
   };
 
   const orderSeeds: OrderSeed[] = [
-    { clientIdx: 0, title: "Сайт-визитка для консалтинга", service: "Многостраничный сайт", source: "Рекомендация", price: 180000, paid: 180000, prepay: 90000, expenses: 25000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 6, review: "Очень довольны результатом, всё быстро и по делу!", reviewUrl: "https://yandex.ru/maps/reviews/1" },
-    { clientIdx: 1, title: "Фирменный стиль кофейни", service: "Фирменный стиль", source: "Instagram", price: 95000, paid: 95000, prepay: 40000, expenses: 12000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 6, review: "Крутой дизайн, клиенты сразу заметили новые стаканы", reviewUrl: "https://instagram.com/review1" },
-    { clientIdx: 2, title: "Лендинг для набора на курс йоги", service: "Лендинг", source: "Сайт", price: 65000, paid: 65000, prepay: 30000, expenses: 5000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 5 },
-    { clientIdx: 4, title: "Логотип и вывеска барбершопа", service: "Логотип", source: "Telegram", price: 45000, paid: 45000, prepay: 20000, expenses: 3000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 5, review: "Отличная работа, рекомендую!", reviewUrl: "https://t.me/review2" },
-    { clientIdx: 5, title: "Упаковка и этикетки для мёда", service: "Другое", source: "Повторное обращение", price: 55000, paid: 55000, prepay: 25000, expenses: 8000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 5 },
-    { clientIdx: 6, title: "Сайт для юридической фирмы", service: "Многостраничный сайт", source: "Партнёр", price: 220000, paid: 220000, prepay: 100000, expenses: 30000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 4 },
-    { clientIdx: 8, title: "Презентация для архитектурного тендера", service: "Презентация", source: "Behance", price: 78000, paid: 78000, prepay: 30000, expenses: 4000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 4 },
-    { clientIdx: 11, title: "Сайт-меню для ресторана", service: "Дизайн сайта", source: "Instagram", price: 130000, paid: 130000, prepay: 60000, expenses: 15000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 4, review: "Гостям очень нравится, бронирования выросли", reviewUrl: "https://yandex.ru/maps/reviews/2" },
-    { clientIdx: 0, title: "Редизайн сайта под новую услугу", service: "Дизайн сайта", source: "Повторное обращение", price: 85000, paid: 85000, prepay: 40000, expenses: 10000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 3 },
-    { clientIdx: 9, title: "Каталог растений (интернет-магазин)", service: "Интернет-магазин", source: "Pinterest", price: 240000, paid: 240000, prepay: 100000, expenses: 45000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 3 },
-    { clientIdx: 12, title: "Карточки товаров для маркетплейса", service: "SMM-дизайн", source: "Pinterest", price: 38000, paid: 38000, prepay: 15000, expenses: 3000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 3 },
-    { clientIdx: 10, title: "Сайт частной школы", service: "Многостраничный сайт", source: "Рекомендация", price: 195000, paid: 195000, prepay: 90000, expenses: 28000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 2, review: "Родители хвалят новый сайт, очень удобно", reviewUrl: "https://yandex.ru/maps/reviews/3" },
-    { clientIdx: 1, title: "Анимация для соцсетей кофейни", service: "Анимация", source: "Instagram", price: 32000, paid: 32000, prepay: 15000, expenses: 4000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 2 },
-    { clientIdx: 14, title: "Фирстиль клиники эстетической медицины", service: "Фирменный стиль", source: "Сайт", price: 165000, paid: 100000, prepay: 100000, expenses: 20000, status: "На согласовании", payStatus: "Частично оплачено", monthsAgo: 2 },
-    { clientIdx: 6, title: "3D-визуализация переговорной", service: "3D-графика", source: "Партнёр", price: 60000, paid: 0, prepay: 0, expenses: 0, status: "Отменён", payStatus: "Не оплачено", monthsAgo: 2 },
-    { clientIdx: 2, title: "Продвижение: серия сторис-шаблонов", service: "SMM-дизайн", source: "Сайт", price: 28000, paid: 28000, prepay: 10000, expenses: 2000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 1 },
-    { clientIdx: 8, title: "Сайт-портфолио архбюро", service: "Дизайн сайта", source: "Behance", price: 140000, paid: 70000, prepay: 70000, expenses: 18000, status: "В работе", payStatus: "Предоплата получена", monthsAgo: 1 },
-    { clientIdx: 12, title: "Фирменный стиль для украшений", service: "Фирменный стиль", source: "Pinterest", price: 88000, paid: 40000, prepay: 40000, expenses: 6000, status: "Правки", payStatus: "Частично оплачено", monthsAgo: 1 },
-    { clientIdx: 5, title: "Сайт для доставки кондитерской", service: "Интернет-магазин", source: "Повторное обращение", price: 210000, paid: 90000, prepay: 90000, expenses: 22000, status: "В работе", payStatus: "Предоплата получена", monthsAgo: 1 },
-    { clientIdx: 11, title: "Новое летнее меню — дизайн печати", service: "Другое", source: "Instagram", price: 26000, paid: 26000, prepay: 10000, expenses: 3000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 1 },
-    { clientIdx: 4, title: "Разработка сайта на Tilda", service: "Разработка на Tilda", source: "Telegram", price: 70000, paid: 30000, prepay: 30000, expenses: 8000, status: "Ожидание материалов", payStatus: "Ожидается предоплата", monthsAgo: 0, deadlineOffsetDays: -5 },
-    { clientIdx: 0, title: "Годовой ребрендинг — этап 2", service: "Фирменный стиль", source: "Повторное обращение", price: 150000, paid: 50000, prepay: 50000, expenses: 10000, status: "В работе", payStatus: "Предоплата получена", monthsAgo: 0, deadlineOffsetDays: 20 },
-    { clientIdx: 3, title: "Логотип и каталог мебели", service: "Логотип", source: "Холодное обращение", price: 52000, paid: 0, prepay: 0, expenses: 0, status: "Обсуждение", payStatus: "Не оплачено", monthsAgo: 0 },
-    { clientIdx: 7, title: "Сайт питомника растений", service: "Лендинг", source: "Pinterest", price: 68000, paid: 0, prepay: 0, expenses: 0, status: "Ожидание предоплаты", payStatus: "Не оплачено", monthsAgo: 0 },
-    { clientIdx: 15, title: "Упаковка для пекарни", service: "Другое", source: "Telegram", price: 40000, paid: 0, prepay: 0, expenses: 0, status: "Новый запрос", payStatus: "Не оплачено", monthsAgo: 0 },
-    { clientIdx: 9, title: "SMM-пакет на лето", service: "SMM-дизайн", source: "Pinterest", price: 34000, paid: 15000, prepay: 15000, expenses: 2000, status: "Ожидание ответа", payStatus: "Ожидается предоплата", monthsAgo: 0 },
-    { clientIdx: 14, title: "Анимация для запуска нового филиала", service: "Анимация", source: "Сайт", price: 45000, paid: 0, prepay: 0, expenses: 0, status: "Запланирован", payStatus: "Не оплачено", monthsAgo: 0 },
-    { clientIdx: 10, title: "Презентация для инвесторов школы", service: "Презентация", source: "Рекомендация", price: 60000, paid: 60000, prepay: 60000, expenses: 5000, status: "В работе", payStatus: "Полностью оплачено", monthsAgo: 0, deadlineOffsetDays: -2 },
+    { clientIdx: 0, title: "Сайт-визитка для консалтинга", service: "Многостраничный сайт", source: "Рекомендация", paid: 180000, expenses: 25000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 6, review: "Очень довольны результатом, всё быстро и по делу!", reviewUrl: "https://yandex.ru/maps/reviews/1" },
+    { clientIdx: 1, title: "Фирменный стиль кофейни", service: "Фирменный стиль", source: "Instagram", paid: 95000, expenses: 12000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 6, review: "Крутой дизайн, клиенты сразу заметили новые стаканы", reviewUrl: "https://instagram.com/review1" },
+    { clientIdx: 2, title: "Лендинг для набора на курс йоги", service: "Лендинг", source: "Сайт", paid: 65000, expenses: 5000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 5 },
+    { clientIdx: 4, title: "Логотип и вывеска барбершопа", service: "Логотип", source: "Telegram", paid: 45000, expenses: 3000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 5, review: "Отличная работа, рекомендую!", reviewUrl: "https://t.me/review2" },
+    { clientIdx: 5, title: "Упаковка и этикетки для мёда", service: "Другое", source: "Повторное обращение", paid: 55000, expenses: 8000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 5 },
+    { clientIdx: 6, title: "Сайт для юридической фирмы", service: "Многостраничный сайт", source: "Партнёр", paid: 220000, expenses: 30000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 4 },
+    { clientIdx: 8, title: "Презентация для архитектурного тендера", service: "Презентация", source: "Behance", paid: 78000, expenses: 4000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 4 },
+    { clientIdx: 11, title: "Сайт-меню для ресторана", service: "Дизайн сайта", source: "Instagram", paid: 130000, expenses: 15000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 4, review: "Гостям очень нравится, бронирования выросли", reviewUrl: "https://yandex.ru/maps/reviews/2" },
+    { clientIdx: 0, title: "Редизайн сайта под новую услугу", service: "Дизайн сайта", source: "Повторное обращение", paid: 85000, expenses: 10000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 3 },
+    { clientIdx: 9, title: "Каталог растений (интернет-магазин)", service: "Интернет-магазин", source: "Pinterest", paid: 240000, expenses: 45000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 3, profitOverride: 190000 },
+    { clientIdx: 12, title: "Карточки товаров для маркетплейса", service: "SMM-дизайн", source: "Pinterest", paid: 38000, expenses: 3000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 3 },
+    { clientIdx: 10, title: "Сайт частной школы", service: "Многостраничный сайт", source: "Рекомендация", paid: 195000, expenses: 28000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 2, review: "Родители хвалят новый сайт, очень удобно", reviewUrl: "https://yandex.ru/maps/reviews/3" },
+    { clientIdx: 1, title: "Анимация для соцсетей кофейни", service: "Анимация", source: "Instagram", paid: 32000, expenses: 4000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 2 },
+    { clientIdx: 14, title: "Фирстиль клиники эстетической медицины", service: "Фирменный стиль", source: "Сайт", paid: 100000, expenses: 20000, status: "На согласовании", payStatus: "Частично оплачено", monthsAgo: 2 },
+    { clientIdx: 6, title: "3D-визуализация переговорной", service: "3D-графика", source: "Партнёр", paid: 0, expenses: 0, status: "Отменён", payStatus: "Не оплачено", monthsAgo: 2 },
+    { clientIdx: 2, title: "Продвижение: серия сторис-шаблонов", service: "SMM-дизайн", source: "Сайт", paid: 28000, expenses: 2000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 1 },
+    { clientIdx: 8, title: "Сайт-портфолио архбюро", service: "Дизайн сайта", source: "Behance", paid: 70000, expenses: 18000, status: "В работе", payStatus: "Предоплата получена", monthsAgo: 1 },
+    { clientIdx: 12, title: "Фирменный стиль для украшений", service: "Фирменный стиль", source: "Pinterest", paid: 40000, expenses: 6000, status: "Правки", payStatus: "Частично оплачено", monthsAgo: 1 },
+    { clientIdx: 5, title: "Сайт для доставки кондитерской", service: "Интернет-магазин", source: "Повторное обращение", paid: 90000, expenses: 22000, status: "В работе", payStatus: "Предоплата получена", monthsAgo: 1 },
+    { clientIdx: 11, title: "Новое летнее меню — дизайн печати", service: "Другое", source: "Instagram", paid: 26000, expenses: 3000, status: "Готово", payStatus: "Полностью оплачено", monthsAgo: 1 },
+    { clientIdx: 4, title: "Разработка сайта на Tilda", service: "Разработка на Tilda", source: "Telegram", paid: 30000, expenses: 8000, status: "Ожидание материалов", payStatus: "Ожидается предоплата", monthsAgo: 0, deadlineOffsetDays: -5 },
+    { clientIdx: 0, title: "Годовой ребрендинг — этап 2", service: "Фирменный стиль", source: "Повторное обращение", paid: 50000, expenses: 10000, status: "В работе", payStatus: "Предоплата получена", monthsAgo: 0, deadlineOffsetDays: 20 },
+    { clientIdx: 3, title: "Логотип и каталог мебели", service: "Логотип", source: "Холодное обращение", paid: 0, expenses: 0, status: "Обсуждение", payStatus: "Не оплачено", monthsAgo: 0 },
+    { clientIdx: 7, title: "Сайт питомника растений", service: "Лендинг", source: "Pinterest", paid: 0, expenses: 0, status: "Ожидание предоплаты", payStatus: "Не оплачено", monthsAgo: 0 },
+    { clientIdx: 15, title: "Упаковка для пекарни", service: "Другое", source: "Telegram", paid: 0, expenses: 0, status: "Новый запрос", payStatus: "Не оплачено", monthsAgo: 0 },
+    { clientIdx: 9, title: "SMM-пакет на лето", service: "SMM-дизайн", source: "Pinterest", paid: 15000, expenses: 2000, status: "Ожидание ответа", payStatus: "Ожидается предоплата", monthsAgo: 0 },
+    { clientIdx: 14, title: "Анимация для запуска нового филиала", service: "Анимация", source: "Сайт", paid: 0, expenses: 0, status: "Запланирован", payStatus: "Не оплачено", monthsAgo: 0 },
+    { clientIdx: 10, title: "Презентация для инвесторов школы", service: "Презентация", source: "Рекомендация", paid: 60000, expenses: 5000, status: "В работе", payStatus: "Полностью оплачено", monthsAgo: 0, deadlineOffsetDays: -2 },
   ];
 
   let created = 0;
@@ -260,10 +259,9 @@ async function main() {
         title: seed.title,
         serviceTypeId: service?.id ?? null,
         description: "",
-        price: seed.price,
-        prepaymentReceived: seed.prepay,
         paymentReceived: seed.paid,
         expenses: seed.expenses,
+        profitOverride: seed.profitOverride ?? null,
         statusId: status.id,
         paymentStatusId: payStatus.id,
         sourceId: source?.id ?? null,
@@ -287,17 +285,6 @@ async function main() {
       note: `Заказ создан: «${seed.title}»`,
       eventDate: createdAt,
     });
-
-    if (seed.prepay > 0) {
-      await db.insert(timelineEvents).values({
-        userId,
-        clientId: client.id,
-        orderId: order.id,
-        type: "prepayment_received",
-        note: `Получена предоплата по заказу «${seed.title}»`,
-        eventDate: startDate,
-      });
-    }
 
     if (seed.review) {
       await db.insert(timelineEvents).values({

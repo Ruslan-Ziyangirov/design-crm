@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { orderSchema } from "@/lib/validation/schemas";
 import type { z } from "zod";
-import { calcProfit, calcRemainder } from "@/lib/calculations";
+import { calcProfit } from "@/lib/calculations";
 import { formatMoney } from "@/lib/format";
 
 type OrderFormValues = z.input<typeof orderSchema>;
@@ -64,16 +64,16 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
     control,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
       clientId: defaultClientId || "",
       title: "",
-      price: 0,
-      prepaymentReceived: 0,
       paymentReceived: 0,
       expenses: 0,
+      profitOverride: null,
       tags: [],
       reviewReceived: false,
     },
@@ -107,10 +107,9 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
             title: order.title,
             serviceTypeId: order.serviceTypeId,
             description: order.description || "",
-            price: order.price,
-            prepaymentReceived: order.prepaymentReceived,
             paymentReceived: order.paymentReceived,
             expenses: order.expenses,
+            profitOverride: order.profitOverride ?? null,
             statusId: order.statusId,
             paymentStatusId: order.paymentStatusId,
             sourceId: order.sourceId,
@@ -134,10 +133,9 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
             statusId: psRes.find((s: ProjectStatus) => s.category === "active")?.id ?? psRes[0]?.id,
             paymentStatusId: payRes.find((s: PaymentStatus) => s.name === "Не оплачено")?.id ?? payRes[0]?.id,
             sourceId: srcRes[0]?.id,
-            price: 0,
-            prepaymentReceived: 0,
             paymentReceived: 0,
             expenses: 0,
+            profitOverride: null,
             firstContactDate: new Date(),
             tags: [],
             reviewReceived: false,
@@ -156,13 +154,14 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, orderId]);
 
-  const price = Number(watch("price")) || 0;
   const paymentReceived = Number(watch("paymentReceived")) || 0;
   const expenses = Number(watch("expenses")) || 0;
   const reviewReceived = watch("reviewReceived");
+  const profitOverride = watch("profitOverride");
+  const manualProfit = profitOverride !== null && profitOverride !== undefined;
 
-  const profit = useMemo(() => calcProfit({ price, paymentReceived, expenses }), [price, paymentReceived, expenses]);
-  const remainder = useMemo(() => calcRemainder({ price, paymentReceived, expenses }), [price, paymentReceived, expenses]);
+  const autoProfit = useMemo(() => calcProfit({ paymentReceived, expenses }), [paymentReceived, expenses]);
+  const profit = manualProfit ? Number(profitOverride) : autoProfit;
 
   async function onSubmit(raw: OrderFormValues) {
     setSaving(true);
@@ -193,7 +192,7 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
         <DialogHeader>
           <DialogTitle>{orderId ? "Редактировать заказ" : "Новый заказ"}</DialogTitle>
           <DialogDescription>
-            Прибыль и остаток к оплате считаются автоматически и не редактируются вручную.
+            Прибыль считается автоматически (Выручка − Расход), но при необходимости её можно задать вручную.
           </DialogDescription>
         </DialogHeader>
 
@@ -321,36 +320,40 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-3 rounded-[12px] border border-[var(--color-border)] bg-black/[0.015] p-3">
+            <div className="grid grid-cols-2 gap-3 rounded-[12px] border border-[var(--color-border)] bg-black/[0.015] p-3">
               <div className="flex flex-col gap-1.5">
-                <Label>Стоимость, ₽</Label>
-                <Input type="number" step="0.01" {...register("price")} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Предоплата, ₽</Label>
-                <Input type="number" step="0.01" {...register("prepaymentReceived")} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Получено всего, ₽</Label>
+                <Label>Выручка, ₽</Label>
                 <Input type="number" step="0.01" {...register("paymentReceived")} />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label>Расходы, ₽</Label>
+                <Label>Расход, ₽</Label>
                 <Input type="number" step="0.01" {...register("expenses")} />
               </div>
-              <div className="col-span-2 flex items-baseline gap-2 pt-1">
-                <span className="text-[12px] text-[var(--color-ink-muted)]">Прибыль:</span>
-                <span
-                  className={`font-numeric text-[15px] font-semibold ${profit >= 0 ? "text-[var(--color-positive)]" : "text-[var(--color-negative)]"}`}
-                >
-                  {formatMoney(profit)}
-                </span>
-              </div>
-              <div className="col-span-2 flex items-baseline gap-2 pt-1">
-                <span className="text-[12px] text-[var(--color-ink-muted)]">Остаток к оплате:</span>
-                <span className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">
-                  {formatMoney(remainder)}
-                </span>
+              <div className="col-span-2 flex flex-col gap-2 border-t border-[var(--color-border)] pt-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-[var(--color-ink-muted)]">Прибыль</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-[var(--color-ink-faint)]">Указать вручную</span>
+                    <Switch
+                      checked={manualProfit}
+                      onCheckedChange={(checked) => setValue("profitOverride", checked ? autoProfit : null)}
+                    />
+                  </div>
+                </div>
+                {manualProfit ? (
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={profitOverride == null ? 0 : Number(profitOverride)}
+                    onChange={(e) => setValue("profitOverride", e.target.value === "" ? null : Number(e.target.value))}
+                  />
+                ) : (
+                  <span
+                    className={`font-numeric text-[15px] font-semibold ${profit >= 0 ? "text-[var(--color-positive)]" : "text-[var(--color-negative)]"}`}
+                  >
+                    {formatMoney(profit)}
+                  </span>
+                )}
               </div>
             </div>
 

@@ -42,7 +42,7 @@ function KanbanCard({ order, onEdit }: { order: OrderWithRelations; onEdit: (id:
       <p className="mt-0.5 truncate text-[12px] text-[var(--color-ink-muted)]">{order.client?.name ?? "—"}</p>
       <div className="mt-2 flex items-center justify-between">
         <span className="font-numeric text-[13px] font-semibold text-[var(--color-ink)]">
-          {formatMoney(order.price)}
+          {formatMoney(order.paymentReceived)}
         </span>
         {order.deadline && (
           <span className={cn("text-[11px]", overdue ? "font-medium text-[var(--color-negative)]" : "text-[var(--color-ink-faint)]")}>
@@ -67,7 +67,7 @@ function KanbanColumn({
   onEdit: (id: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status.id });
-  const total = orders.reduce((s, o) => s + o.price, 0);
+  const total = orders.reduce((s, o) => s + o.paymentReceived, 0);
 
   return (
     <div

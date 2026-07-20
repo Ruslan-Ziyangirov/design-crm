@@ -155,10 +155,10 @@ export const orders = pgTable(
     }),
     description: text("description"),
 
-    price: doublePrecision("price").notNull().default(0),
-    prepaymentReceived: doublePrecision("prepayment_received").notNull().default(0),
     paymentReceived: doublePrecision("payment_received").notNull().default(0),
     expenses: doublePrecision("expenses").notNull().default(0),
+    /** Ручной override прибыли. null = считать автоматически (paymentReceived - expenses). */
+    profitOverride: doublePrecision("profit_override"),
 
     statusId: text("status_id")
       .notNull()

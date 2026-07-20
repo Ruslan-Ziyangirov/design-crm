@@ -84,7 +84,6 @@ export default async function AnalyticsPage() {
     orderCount: overall.orderCount,
     clientCount: clientRows.length,
     repeatClientPercent,
-    outstanding: overall.outstanding,
     avgDurationDays,
     onTimeCount,
     overdueCount,

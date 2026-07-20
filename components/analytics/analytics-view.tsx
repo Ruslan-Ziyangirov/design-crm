@@ -30,7 +30,6 @@ interface OverallStats {
   orderCount: number;
   clientCount: number;
   repeatClientPercent: number;
-  outstanding: number;
   avgDurationDays: number;
   onTimeCount: number;
   overdueCount: number;
@@ -144,7 +143,6 @@ export function AnalyticsView({ monthlyTable, overallStats, orders, serviceTypes
         <StatBox label="Заказов всего" value={String(overallStats.orderCount)} />
         <StatBox label="Клиентов" value={String(overallStats.clientCount)} />
         <StatBox label="Повторные клиенты" value={`${overallStats.repeatClientPercent}%`} />
-        <StatBox label="Задолженность" value={formatMoney(overallStats.outstanding)} accent="warning" />
         <StatBox label="Средний срок проекта" value={`${overallStats.avgDurationDays} дн.`} />
         <StatBox label="Завершено в срок" value={String(overallStats.onTimeCount)} accent="positive" />
         <StatBox label="Просрочено" value={String(overallStats.overdueCount)} accent="negative" />
@@ -229,7 +227,7 @@ export function AnalyticsView({ monthlyTable, overallStats, orders, serviceTypes
                   <p className="truncate text-[13px] font-medium text-[var(--color-ink)]">{o.title}</p>
                   <p className="text-[11.5px] text-[var(--color-ink-faint)]">{o.client?.name}</p>
                 </div>
-                <span className="font-numeric text-[13px] font-semibold">{formatMoney(o.price)}</span>
+                <span className="font-numeric text-[13px] font-semibold">{formatMoney(o.paymentReceived)}</span>
               </div>
             ))}
           </CardContent>

@@ -5,42 +5,43 @@
   --font-body: var(--font-inter);
   --font-mono: var(--font-jetbrains);
 
-  /* Холст и поверхности — тёплый нейтральный, не белый "в лоб" */
-  --color-canvas: #f7f7f4;
-  --color-surface: #ffffff;
+  /* Холст — чистый белый; поверхности — лёгкая голубоватая подложка для информации */
+  --color-canvas: #ffffff;
+  --color-surface: #f8fbff;
   --color-surface-raised: #ffffff;
-  --color-border: #e6e4de;
-  --color-border-strong: #d8d5cd;
+  --color-border: #e3e8ef;
+  --color-border-strong: #cbd5e1;
 
-  /* Текст */
-  --color-ink: #181917;
-  --color-ink-muted: #6b6d66;
-  --color-ink-faint: #9a9c93;
+  /* Текст — холодный нейтральный, в тон голубоватым поверхностям */
+  --color-ink: #0f172a;
+  --color-ink-muted: #64748b;
+  --color-ink-faint: #94a3b8;
 
-  /* Акцент студии — глубокий тил вместо дефолтного синего/терракотового */
-  --color-accent: #0f6e5c;
-  --color-accent-hover: #0b5647;
-  --color-accent-soft: #e6f2ee;
-  --color-accent-ink: #08382e;
+  /* Акцент студии */
+  --color-accent: #ff3c00;
+  --color-accent-hover: #d83300;
+  --color-accent-soft: #ffe8e0;
+  --color-accent-ink: #8a2400;
 
-  /* Статусные цвета (соответствуют ТЗ: зелёный/жёлтый/синий/красный/серый) */
+  /* Статусные цвета — сдвинуты от акцента (вермилион), чтобы не путаться с ним:
+     negative в розово-красную сторону, warning в жёлто-янтарную */
   --color-positive: #1c8a5a;
   --color-positive-soft: #e6f5ec;
-  --color-negative: #d33a2c;
-  --color-negative-soft: #fbeae7;
-  --color-warning: #c8850f;
-  --color-warning-soft: #faf1de;
+  --color-negative: #e11d48;
+  --color-negative-soft: #ffe4e6;
+  --color-warning: #ca8a04;
+  --color-warning-soft: #fef3c7;
   --color-info: #2563eb;
   --color-info-soft: #e9f0fe;
-  --color-neutral: #6b6d66;
-  --color-neutral-soft: #eeede8;
+  --color-neutral: #64748b;
+  --color-neutral-soft: #f1f5f9;
 
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
 
-  --shadow-soft: 0 1px 2px rgba(23, 23, 20, 0.04), 0 4px 16px rgba(23, 23, 20, 0.04);
-  --shadow-lifted: 0 2px 4px rgba(23, 23, 20, 0.05), 0 12px 32px rgba(23, 23, 20, 0.08);
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.04);
+  --shadow-lifted: 0 2px 4px rgba(15, 23, 42, 0.05), 0 12px 32px rgba(15, 23, 42, 0.08);
 }
 
 .dark {
@@ -54,17 +55,17 @@
   --color-ink-muted: #a6a89f;
   --color-ink-faint: #7a7c74;
 
-  --color-accent: #2fa88d;
-  --color-accent-hover: #45bda1;
-  --color-accent-soft: #163430;
-  --color-accent-ink: #bdeee0;
+  --color-accent: #ff5a2e;
+  --color-accent-hover: #ff7a50;
+  --color-accent-soft: #3d1400;
+  --color-accent-ink: #ffb499;
 
   --color-positive: #3ecb8c;
   --color-positive-soft: #163a2b;
-  --color-negative: #f0685a;
-  --color-negative-soft: #3d2020;
-  --color-warning: #e3ab4c;
-  --color-warning-soft: #3a2f16;
+  --color-negative: #fb7185;
+  --color-negative-soft: #4a1120;
+  --color-warning: #fbbf24;
+  --color-warning-soft: #422d06;
   --color-info: #6fa2ff;
   --color-info-soft: #1c2a42;
   --color-neutral: #a6a89f;

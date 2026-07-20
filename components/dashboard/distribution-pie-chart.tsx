@@ -3,7 +3,9 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-const COLORS = ["#0f6e5c", "#2563eb", "#c8850f", "#d33a2c", "#7c5cbf", "#94a3b8", "#ea580c", "#1c8a5a", "#64748b", "#2fa88d", "#6b7280"];
+// Валидированная категориальная палитра (см. навык dataviz: фиксированный порядок,
+// CVD-разделение и контраст против подложки #F8FBFF проверены скриптом validate_palette.js).
+const COLORS = ["#2a78d6", "#008300", "#e87ba4", "#eda100", "#1baf7a", "#eb6834", "#4a3aa7", "#e34948", "#64748b", "#92400e", "#475569"];
 
 interface Props {
   title: string;

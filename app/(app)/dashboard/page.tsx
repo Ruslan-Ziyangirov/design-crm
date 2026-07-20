@@ -74,7 +74,6 @@ export default async function DashboardPage({
         <KpiCard label="Средний чек" value={kpis.averageCheck.value} change={kpis.averageCheck.change} />
         <KpiCard label="Рентабельность" value={kpis.margin.value} change={kpis.margin.change} format="percent" />
         <KpiCard label="Активные проекты" value={kpis.activeProjects.value} format="number" hint="сейчас" />
-        <KpiCard label="К доплате" value={kpis.outstanding.value} hint="сейчас" />
         <KpiCard label="Новые клиенты" value={kpis.newClients.value} change={kpis.newClients.change} format="number" />
         <KpiCard
           label="Завершено проектов"
