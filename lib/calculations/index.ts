@@ -67,6 +67,14 @@ export function isOverdue(order: Pick<OrderForCalc, "deadline" | "statusCategory
   return order.deadline.getTime() < now.getTime();
 }
 
+/** Прогноз прибыли на конец месяца по текущему темпу (прибыль/день × дней в месяце). */
+export function calcProfitForecast(profitSoFar: number, now: Date): number {
+  const daysElapsed = now.getDate();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  if (daysElapsed <= 0) return profitSoFar;
+  return round2((profitSoFar / daysElapsed) * daysInMonth);
+}
+
 /** Заказы, которые нужно исключать из выручки/прибыли (отменённые). */
 export function isExcludedFromRevenue(order: Pick<OrderForCalc, "statusCategory">): boolean {
   return order.statusCategory === "cancelled";

@@ -4,6 +4,7 @@ import {
   calcMargin,
   calcAverageCheck,
   calcChangePercent,
+  calcProfitForecast,
   isOverdue,
   isExcludedFromRevenue,
   aggregateOrders,
@@ -85,6 +86,21 @@ describe("calcChangePercent", () => {
 
   it("возвращает 100%, если рост с нуля", () => {
     expect(calcChangePercent(50, 0)).toBe(100);
+  });
+});
+
+describe("calcProfitForecast", () => {
+  it("проецирует прибыль на весь месяц по темпу на середину месяца", () => {
+    // 2026-07-15: прошло 15 дней из 31 -> при темпе 1000/день прогноз 31000
+    expect(calcProfitForecast(15000, new Date("2026-07-15T12:00:00"))).toBe(31000);
+  });
+
+  it("экстраполирует по темпу первого дня месяца (июль — 31 день)", () => {
+    expect(calcProfitForecast(500, new Date("2026-07-01T12:00:00"))).toBe(15500);
+  });
+
+  it("в последний день месяца прогноз равен факту", () => {
+    expect(calcProfitForecast(42000, new Date("2026-07-31T12:00:00"))).toBe(42000);
   });
 });
 

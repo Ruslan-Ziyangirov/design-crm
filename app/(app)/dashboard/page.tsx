@@ -1,18 +1,21 @@
 import { requireUserId } from "@/lib/auth/session-helpers";
-import { getOrdersFull, getReferenceData, toCalcOrder } from "@/lib/db/queries";
+import { getOrdersFull, getReferenceData, toCalcOrder, getProfitPlan } from "@/lib/db/queries";
 import { db } from "@/lib/db";
 import { clients } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { buildDashboard, resolvePeriod, type PeriodKey } from "@/lib/dashboard/build";
+import { aggregateOrders } from "@/lib/calculations";
+import { buildDashboard, buildCurrentYearMonths, resolvePeriod, type PeriodKey } from "@/lib/dashboard/build";
 import { PeriodSelector } from "@/components/dashboard/period-selector";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { RevenueChart } from "@/components/dashboard/revenue-chart";
 import { OrdersCountChart } from "@/components/dashboard/orders-count-chart";
 import { DistributionPieChart } from "@/components/dashboard/distribution-pie-chart";
 import { AverageCheckChart } from "@/components/dashboard/average-check-chart";
+import { CurrentYearProfitChart } from "@/components/dashboard/current-year-profit-chart";
 import { FunnelCard } from "@/components/dashboard/funnel-card";
 import { BestMonthsCard } from "@/components/dashboard/best-months-card";
 import { TrendsCard } from "@/components/dashboard/trends-card";
+import { ProfitPlanCard } from "@/components/dashboard/profit-plan-card";
 
 export default async function DashboardPage({
   searchParams,
@@ -45,7 +48,8 @@ export default async function DashboardPage({
     now,
   });
 
-  const { kpis, monthBuckets, bestMonths, trends, trendDirections, bySource, byService, funnel } = dashboard;
+  const { kpis, monthBuckets, bestMonths, trends, trendDirections, trendsYoY, trendDirectionsYoY, bySource, byService, funnel } =
+    dashboard;
 
   const chartData = monthBuckets.map((b) => ({
     label: b.label,
@@ -54,6 +58,19 @@ export default async function DashboardPage({
     profit: b.financials.profit,
     count: b.financials.orderCount,
     averageCheck: b.financials.averageCheck,
+  }));
+
+  // ---- План по прибыли: всегда про календарный текущий месяц, независимо от периода на странице ----
+  const currentMonthRange = resolvePeriod("current_month", now);
+  const currentMonthProfit = aggregateOrders(
+    calcOrders.filter((o) => o.createdAt >= currentMonthRange.from && o.createdAt <= currentMonthRange.to),
+  ).profit;
+  const profitPlan = await getProfitPlan(userId, now.getFullYear(), now.getMonth() + 1);
+
+  // ---- Прибыль по месяцам строго текущего года (Январь -> текущий месяц) ----
+  const currentYearMonths = buildCurrentYearMonths(calcOrders, clientRows, now).map((b) => ({
+    label: b.label,
+    profit: b.financials.profit,
   }));
 
   return (
@@ -83,6 +100,8 @@ export default async function DashboardPage({
         />
       </div>
 
+      <ProfitPlanCard plan={profitPlan?.targetProfit ?? null} actual={currentMonthProfit} now={now} />
+
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <RevenueChart data={chartData} />
@@ -96,22 +115,24 @@ export default async function DashboardPage({
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <CurrentYearProfitChart data={currentYearMonths} />
         <DistributionPieChart title="Клиенты по источникам" data={bySource} />
-        <DistributionPieChart title="Заказы по типам услуг" data={byService} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <DistributionPieChart title="Заказы по типам услуг" data={byService} />
         <BestMonthsCard best={bestMonths} />
-        <TrendsCard
-          items={[
-            { label: "Выручка", change: trends.revenue, direction: trendDirections.revenue },
-            { label: "Прибыль", change: trends.profit, direction: trendDirections.profit },
-            { label: "Средний чек", change: trends.averageCheck, direction: trendDirections.averageCheck },
-            { label: "Новые клиенты", change: trends.newClients, direction: trendDirections.newClients },
-            { label: "Расходы", change: trends.expenses, direction: trendDirections.expenses },
-          ]}
-        />
       </div>
+
+      <TrendsCard
+        items={[
+          { label: "Выручка", changeMoM: trends.revenue, directionMoM: trendDirections.revenue, changeYoY: trendsYoY.revenue, directionYoY: trendDirectionsYoY.revenue },
+          { label: "Прибыль", changeMoM: trends.profit, directionMoM: trendDirections.profit, changeYoY: trendsYoY.profit, directionYoY: trendDirectionsYoY.profit },
+          { label: "Средний чек", changeMoM: trends.averageCheck, directionMoM: trendDirections.averageCheck, changeYoY: trendsYoY.averageCheck, directionYoY: trendDirectionsYoY.averageCheck },
+          { label: "Новые клиенты", changeMoM: trends.newClients, directionMoM: trendDirections.newClients, changeYoY: trendsYoY.newClients, directionYoY: trendDirectionsYoY.newClients },
+          { label: "Расходы", changeMoM: trends.expenses, directionMoM: trendDirections.expenses, changeYoY: trendsYoY.expenses, directionYoY: trendDirectionsYoY.expenses },
+        ]}
+      />
     </div>
   );
 }

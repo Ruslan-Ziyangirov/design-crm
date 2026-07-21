@@ -158,6 +158,31 @@ export function buildDashboard({
     expenses: trendDirection(trends.expenses),
   };
 
+  // ---- Тренды год-к-году: текущий месяц против того же месяца год назад ----
+  const currentMonthRange: PeriodRange = {
+    from: new Date(now.getFullYear(), now.getMonth(), 1),
+    to: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59),
+  };
+  const sameMonthLastYearRange = sameRangeLastYear(currentMonthRange);
+  const currentMonthAgg = aggregateOrders(filterByRange(orders, currentMonthRange));
+  const sameMonthLastYearAgg = aggregateOrders(filterByRange(orders, sameMonthLastYearRange));
+  const newClientsCurrentMonth = clients.filter((c) => inRange(c.createdAt, currentMonthRange)).length;
+  const newClientsSameMonthLastYear = clients.filter((c) => inRange(c.createdAt, sameMonthLastYearRange)).length;
+  const trendsYoY = {
+    revenue: calcChangePercent(currentMonthAgg.revenue, sameMonthLastYearAgg.revenue),
+    profit: calcChangePercent(currentMonthAgg.profit, sameMonthLastYearAgg.profit),
+    averageCheck: calcChangePercent(currentMonthAgg.averageCheck, sameMonthLastYearAgg.averageCheck),
+    newClients: calcChangePercent(newClientsCurrentMonth, newClientsSameMonthLastYear),
+    expenses: calcChangePercent(currentMonthAgg.expenses, sameMonthLastYearAgg.expenses),
+  };
+  const trendDirectionsYoY = {
+    revenue: trendDirection(trendsYoY.revenue),
+    profit: trendDirection(trendsYoY.profit),
+    averageCheck: trendDirection(trendsYoY.averageCheck),
+    newClients: trendDirection(trendsYoY.newClients),
+    expenses: trendDirection(trendsYoY.expenses),
+  };
+
   // ---- Распределения ----
   const sourceMap = Object.fromEntries(sources.map((s) => [s.id, s.name]));
   const serviceMap = Object.fromEntries(serviceTypes.map((s) => [s.id, s.name]));
@@ -181,10 +206,34 @@ export function buildDashboard({
     bestMonths,
     trends,
     trendDirections,
+    trendsYoY,
+    trendDirectionsYoY,
     bySource,
     byService,
     funnel,
   };
+}
+
+/** Помесячные показатели строго с января по текущий месяц текущего года (не скользящее окно). */
+export function buildCurrentYearMonths(
+  orders: OrderForCalc[],
+  clients: Pick<Client, "id" | "createdAt">[],
+  now: Date,
+): MonthBucket[] {
+  const buckets: MonthBucket[] = [];
+  for (let m = 0; m <= now.getMonth(); m++) {
+    const d = new Date(now.getFullYear(), m, 1);
+    const key = `${d.getFullYear()}-${String(m + 1).padStart(2, "0")}`;
+    const bucketRange: PeriodRange = { from: d, to: new Date(d.getFullYear(), m + 1, 0, 23, 59, 59) };
+    const bucketOrders = filterByRange(orders, bucketRange);
+    buckets.push({
+      key,
+      label: monthLabel(d),
+      financials: aggregateOrders(bucketOrders),
+      newClients: clients.filter((c) => inRange(c.createdAt, bucketRange)).length,
+    });
+  }
+  return buckets;
 }
 
 function monthLabel(d: Date): string {

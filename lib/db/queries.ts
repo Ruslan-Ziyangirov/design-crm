@@ -7,6 +7,7 @@ import {
   projectStatuses,
   paymentStatuses,
   timelineEvents,
+  profitPlans,
   type Order,
 } from "@/lib/db/schema";
 import { and, eq, desc, asc } from "drizzle-orm";
@@ -110,4 +111,21 @@ export function toCalcOrder(o: {
     serviceTypeId: o.serviceTypeId,
     sourceId: o.sourceId,
   };
+}
+
+export async function getProfitPlansForYear(userId: string, year: number) {
+  return db
+    .select()
+    .from(profitPlans)
+    .where(and(eq(profitPlans.userId, userId), eq(profitPlans.year, year)))
+    .orderBy(asc(profitPlans.month));
+}
+
+export async function getProfitPlan(userId: string, year: number, month: number) {
+  const [row] = await db
+    .select()
+    .from(profitPlans)
+    .where(and(eq(profitPlans.userId, userId), eq(profitPlans.year, year), eq(profitPlans.month, month)))
+    .limit(1);
+  return row ?? null;
 }

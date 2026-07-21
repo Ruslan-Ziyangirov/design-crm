@@ -29,6 +29,20 @@
       "when": 1784620948972,
       "tag": "0003_enable_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784663179799,
+      "tag": "0004_cool_wendigo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1784663263212,
+      "tag": "0005_enable_rls_profit_plans",
+      "breakpoints": true
     }
   ]
 }

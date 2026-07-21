@@ -9,6 +9,7 @@ import {
   doublePrecision,
   integer,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -241,11 +242,30 @@ export const timelineEvents = pgTable(
   ],
 );
 
+/** План по прибыли на конкретный месяц. Задаётся вручную в Настройках. */
+export const profitPlans = pgTable(
+  "profit_plans",
+  {
+    id: id(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    year: integer("year").notNull(),
+    month: integer("month").notNull(), // 1-12
+    targetProfit: doublePrecision("target_profit").notNull(),
+    ...timestamps(),
+  },
+  (table) => [
+    uniqueIndex("profit_plans_user_year_month_idx").on(table.userId, table.year, table.month),
+  ],
+);
+
 // ---------- relations ----------
 
 export const usersRelations = relations(users, ({ many }) => ({
   clients: many(clients),
   orders: many(orders),
+  profitPlans: many(profitPlans),
 }));
 
 export const clientsRelations = relations(clients, ({ one, many }) => ({
@@ -297,3 +317,4 @@ export type ServiceType = typeof serviceTypes.$inferSelect;
 export type ProjectStatus = typeof projectStatuses.$inferSelect;
 export type PaymentStatus = typeof paymentStatuses.$inferSelect;
 export type TimelineEvent = typeof timelineEvents.$inferSelect;
+export type ProfitPlan = typeof profitPlans.$inferSelect;

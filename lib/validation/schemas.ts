@@ -80,6 +80,13 @@ export const referenceItemSchema = z.object({
 });
 export type ReferenceItemInput = z.infer<typeof referenceItemSchema>;
 
+export const profitPlanSchema = z.object({
+  year: z.coerce.number().int().min(2000).max(2100),
+  month: z.coerce.number().int().min(1).max(12),
+  targetProfit: z.coerce.number().min(0),
+});
+export type ProfitPlanInput = z.infer<typeof profitPlanSchema>;
+
 export const loginSchema = z.object({
   email: z.string().email("Введите корректный email"),
   password: z.string().min(1, "Введите пароль"),

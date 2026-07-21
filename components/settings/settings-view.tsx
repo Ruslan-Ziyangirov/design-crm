@@ -8,7 +8,8 @@ import { ReferenceListEditor } from "@/components/settings/reference-list-editor
 import { StatusListEditor } from "@/components/settings/status-list-editor";
 import { PaymentStatusEditor } from "@/components/settings/payment-status-editor";
 import { DataManagement } from "@/components/settings/data-management";
-import type { User, Source, ServiceType, ProjectStatus, PaymentStatus } from "@/lib/db/schema";
+import { ProfitPlanEditor } from "@/components/settings/profit-plan-editor";
+import type { User, Source, ServiceType, ProjectStatus, PaymentStatus, ProfitPlan } from "@/lib/db/schema";
 
 interface Props {
   user: Omit<User, "passwordHash">;
@@ -16,9 +17,19 @@ interface Props {
   serviceTypes: ServiceType[];
   projectStatuses: ProjectStatus[];
   paymentStatuses: PaymentStatus[];
+  profitPlans: ProfitPlan[];
+  profitPlanYear: number;
 }
 
-export function SettingsView({ user, sources, serviceTypes, projectStatuses, paymentStatuses }: Props) {
+export function SettingsView({
+  user,
+  sources,
+  serviceTypes,
+  projectStatuses,
+  paymentStatuses,
+  profitPlans,
+  profitPlanYear,
+}: Props) {
   const router = useRouter();
   const refresh = () => router.refresh();
 
@@ -34,6 +45,7 @@ export function SettingsView({ user, sources, serviceTypes, projectStatuses, pay
           <TabsTrigger value="general">Общее</TabsTrigger>
           <TabsTrigger value="references">Услуги и источники</TabsTrigger>
           <TabsTrigger value="statuses">Статусы</TabsTrigger>
+          <TabsTrigger value="plan">План</TabsTrigger>
           <TabsTrigger value="data">Данные</TabsTrigger>
         </TabsList>
 
@@ -73,6 +85,14 @@ export function SettingsView({ user, sources, serviceTypes, projectStatuses, pay
               <StatusListEditor statuses={projectStatuses} onChanged={refresh} />
               <div className="h-px bg-[var(--color-border)]" />
               <PaymentStatusEditor statuses={paymentStatuses} onChanged={refresh} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="plan">
+          <Card>
+            <CardContent className="pt-5">
+              <ProfitPlanEditor initialPlans={profitPlans} initialYear={profitPlanYear} />
             </CardContent>
           </Card>
         </TabsContent>

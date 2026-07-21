@@ -264,8 +264,13 @@ export function OrdersTable({
                   {(groupBy === "none" ? group.rows.filter((r) => pageRows.includes(r)) : group.rows).map((o) => {
                     const overdue = isOverdue({ deadline: o.deadline ? new Date(o.deadline) : null, statusCategory: o.status?.category ?? "active" });
                     return (
-                      <TableRow key={o.id} data-state={selected.has(o.id) ? "selected" : undefined}>
-                        <TableCell>
+                      <TableRow
+                        key={o.id}
+                        data-state={selected.has(o.id) ? "selected" : undefined}
+                        className="cursor-pointer"
+                        onClick={() => onEdit(o.id)}
+                      >
+                        <TableCell onClick={(e) => e.stopPropagation()}>
                           <Checkbox checked={selected.has(o.id)} onCheckedChange={() => toggleSelect(o.id)} />
                         </TableCell>
                         <TableCell className="max-w-[220px]">
@@ -305,7 +310,7 @@ export function OrdersTable({
                           {formatDate(o.deadline)}
                           {overdue && " · просрочен"}
                         </TableCell>
-                        <TableCell>
+                        <TableCell onClick={(e) => e.stopPropagation()}>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon" className="h-7 w-7">

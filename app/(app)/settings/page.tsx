@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireUserId } from "@/lib/auth/session-helpers";
-import { getReferenceData } from "@/lib/db/queries";
+import { getReferenceData, getProfitPlansForYear } from "@/lib/db/queries";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -8,9 +8,11 @@ import { SettingsView } from "@/components/settings/settings-view";
 
 export default async function SettingsPage() {
   const userId = await requireUserId();
-  const [refs, [user]] = await Promise.all([
+  const profitPlanYear = new Date().getFullYear();
+  const [refs, [user], profitPlans] = await Promise.all([
     getReferenceData(userId),
     db.select().from(users).where(eq(users.id, userId)),
+    getProfitPlansForYear(userId, profitPlanYear),
   ]);
 
   // Сессия (JWT) может пережить самого пользователя в БД — например, после
@@ -27,6 +29,8 @@ export default async function SettingsPage() {
       serviceTypes={refs.serviceTypes}
       projectStatuses={refs.projectStatuses}
       paymentStatuses={refs.paymentStatuses}
+      profitPlans={profitPlans}
+      profitPlanYear={profitPlanYear}
     />
   );
 }
