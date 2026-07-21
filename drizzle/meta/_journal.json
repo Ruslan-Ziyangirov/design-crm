@@ -22,6 +22,13 @@
       "when": 1784572412225,
       "tag": "0002_smart_the_captain",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784620948972,
+      "tag": "0003_enable_rls",
+      "breakpoints": true
     }
   ]
 }
