@@ -31,12 +31,12 @@ export function UnpaidStartedCard({ orders }: { orders: UnpaidStartedOrder[] }) 
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CircleDollarSign className="h-4 w-4 text-[var(--color-warning)]" />
-          Начали работу, но не оплатили
+          Начали работу, но не оплачено полностью
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-1.5">
         {orders.length === 0 && (
-          <p className="text-[13px] text-[var(--color-ink-faint)]">Таких заказов нет — все, что в работе, уже оплачено.</p>
+          <p className="text-[13px] text-[var(--color-ink-faint)]">Таких заказов нет — всё, что в работе, оплачено полностью.</p>
         )}
         {orders.map((o) => (
           <button

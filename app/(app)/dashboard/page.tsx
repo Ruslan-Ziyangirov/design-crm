@@ -74,9 +74,16 @@ export default async function DashboardPage({
     profit: b.financials.profit,
   }));
 
-  // ---- Начали работу, но не оплатили ----
+  // ---- Начали работу, но статус оплаты не "Полностью оплачено" ----
   const ordersFullById = new Map(ordersFull.map((o) => [o.id, o]));
-  const unpaidStartedOrders = findUnpaidStartedOrders(calcOrders)
+  const unpaidStartedOrders = findUnpaidStartedOrders(
+    ordersFull.map((o) => ({
+      id: o.id,
+      startDate: o.startDate,
+      isFullyPaid: (o.paymentStatus?.name ?? "").trim().toLowerCase() === "полностью оплачено",
+      statusCategory: o.status.category,
+    })),
+  )
     .map((o) => ordersFullById.get(o.id))
     .filter((o) => o !== undefined)
     .map((o) => ({
