@@ -210,7 +210,7 @@ export function OrdersTable({
   return (
     <div className="flex flex-col gap-3">
       {selected.size > 0 && (
-        <div className="flex items-center justify-between rounded-[12px] border border-[var(--color-border)] bg-[var(--color-accent-soft)] px-4 py-2">
+        <div className="flex items-center justify-between rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-accent-soft)] px-4 py-2 animate-fade-in">
           <p className="text-[13px] font-medium text-[var(--color-accent-ink)]">Выбрано: {selected.size}</p>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="secondary" onClick={exportSelected} className="gap-1.5">
@@ -228,7 +228,7 @@ export function OrdersTable({
         </div>
       )}
 
-      <div className="overflow-hidden rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)]">
+      <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
         <div className="max-h-[65vh] overflow-y-auto">
           <Table>
             <TableHeader>
@@ -267,7 +267,7 @@ export function OrdersTable({
                       <TableRow
                         key={o.id}
                         data-state={selected.has(o.id) ? "selected" : undefined}
-                        className="cursor-pointer"
+                        className="cursor-pointer transition-colors active:bg-[var(--color-accent-soft)]"
                         onClick={() => onEdit(o.id)}
                       >
                         <TableCell onClick={(e) => e.stopPropagation()}>

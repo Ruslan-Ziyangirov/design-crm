@@ -4,6 +4,38 @@ import { formatMoney } from "@/lib/format";
 import { calcProfitForecast } from "@/lib/calculations";
 import { cn } from "@/lib/utils";
 
+const RADIUS = 56;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+function ProgressRing({ percent, positive }: { percent: number; positive: boolean }) {
+  const clamped = Math.min(Math.max(percent, 0), 100);
+  const offset = CIRCUMFERENCE * (1 - clamped / 100);
+
+  return (
+    <div className="relative h-[136px] w-[136px] shrink-0">
+      <svg viewBox="0 0 128 128" className="h-full w-full -rotate-90">
+        <circle cx="64" cy="64" r={RADIUS} fill="none" stroke="var(--color-neutral-soft)" strokeWidth="12" />
+        <circle
+          cx="64"
+          cy="64"
+          r={RADIUS}
+          fill="none"
+          stroke={positive ? "var(--color-positive)" : "var(--color-accent)"}
+          strokeWidth="12"
+          strokeLinecap="round"
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={offset}
+          className="transition-[stroke-dashoffset] duration-500 ease-out"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-numeric text-[26px] font-semibold leading-none text-[var(--color-ink)]">{percent}%</span>
+        <span className="mt-1 text-[11px] text-[var(--color-ink-faint)]">от плана</span>
+      </div>
+    </div>
+  );
+}
+
 export function ProfitPlanCard({ plan, actual, now }: { plan: number | null; actual: number; now: Date }) {
   const monthLabel = now.toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
 
@@ -39,39 +71,33 @@ export function ProfitPlanCard({ plan, actual, now }: { plan: number | null; act
         <CardTitle>План по прибыли — {monthLabel}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-neutral-soft)]">
-            <div
-              className={cn("h-full rounded-full", percent >= 100 ? "bg-[var(--color-positive)]" : "bg-[var(--color-accent)]")}
-              style={{ width: `${Math.min(percent, 100)}%` }}
-            />
-          </div>
-          <p className="mt-1.5 text-[12px] text-[var(--color-ink-muted)]">{percent}% от плана выполнено</p>
-        </div>
+        <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center">
+          <ProgressRing percent={percent} positive={percent >= 100} />
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div>
-            <p className="text-[11.5px] text-[var(--color-ink-faint)]">План</p>
-            <p className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">{formatMoney(plan)}</p>
-          </div>
-          <div>
-            <p className="text-[11.5px] text-[var(--color-ink-faint)]">Факт</p>
-            <p className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">{formatMoney(actual)}</p>
-          </div>
-          <div>
-            <p className="text-[11.5px] text-[var(--color-ink-faint)]">Осталось</p>
-            <p className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">{formatMoney(remaining)}</p>
-          </div>
-          <div>
-            <p className="text-[11.5px] text-[var(--color-ink-faint)]">Прогноз</p>
-            <p
-              className={cn(
-                "font-numeric text-[15px] font-semibold",
-                onTrack ? "text-[var(--color-positive)]" : "text-[var(--color-negative)]",
-              )}
-            >
-              {formatMoney(forecast)}
-            </p>
+          <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
+            <div>
+              <p className="text-[11.5px] text-[var(--color-ink-faint)]">План</p>
+              <p className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">{formatMoney(plan)}</p>
+            </div>
+            <div>
+              <p className="text-[11.5px] text-[var(--color-ink-faint)]">Факт</p>
+              <p className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">{formatMoney(actual)}</p>
+            </div>
+            <div>
+              <p className="text-[11.5px] text-[var(--color-ink-faint)]">Осталось</p>
+              <p className="font-numeric text-[15px] font-semibold text-[var(--color-ink)]">{formatMoney(remaining)}</p>
+            </div>
+            <div>
+              <p className="text-[11.5px] text-[var(--color-ink-faint)]">Прогноз</p>
+              <p
+                className={cn(
+                  "font-numeric text-[15px] font-semibold",
+                  onTrack ? "text-[var(--color-positive)]" : "text-[var(--color-negative)]",
+                )}
+              >
+                {formatMoney(forecast)}
+              </p>
+            </div>
           </div>
         </div>
 

@@ -6,6 +6,7 @@ import { Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { SectionHeading } from "@/components/ui/section-heading";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -104,21 +105,29 @@ export function StatusListEditor({ statuses, onChanged }: { statuses: ProjectSta
 
   return (
     <div className="flex flex-col gap-3">
-      <div>
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">Статусы проекта</p>
-        <p className="text-[12.5px] text-[var(--color-ink-muted)]">
-          Порядок статусов определяет колонки канбана и воронку на дашборде
-        </p>
-      </div>
+      <SectionHeading
+        title="Статусы проекта"
+        description="Порядок статусов определяет колонки канбана и воронку на дашборде"
+      />
 
       <div className="flex flex-col gap-1.5">
         {sorted.map((s, i) => (
-          <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-[var(--color-border)] p-2">
+          <div key={s.id} className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] p-2">
             <div className="flex flex-col">
-              <button disabled={i === 0} onClick={() => move(i, -1)} className="text-[var(--color-ink-faint)] disabled:opacity-20 hover:text-[var(--color-ink)]">
+              <button
+                disabled={i === 0}
+                onClick={() => move(i, -1)}
+                aria-label="Переместить выше"
+                className="text-[var(--color-ink-faint)] disabled:opacity-20 hover:text-[var(--color-ink)]"
+              >
                 <ArrowUp className="h-3 w-3" />
               </button>
-              <button disabled={i === sorted.length - 1} onClick={() => move(i, 1)} className="text-[var(--color-ink-faint)] disabled:opacity-20 hover:text-[var(--color-ink)]">
+              <button
+                disabled={i === sorted.length - 1}
+                onClick={() => move(i, 1)}
+                aria-label="Переместить ниже"
+                className="text-[var(--color-ink-faint)] disabled:opacity-20 hover:text-[var(--color-ink)]"
+              >
                 <ArrowDown className="h-3 w-3" />
               </button>
             </div>
@@ -128,6 +137,8 @@ export function StatusListEditor({ statuses, onChanged }: { statuses: ProjectSta
                 <button
                   key={c}
                   onClick={() => updateColor(s.id, c)}
+                  aria-label={`Цвет ${c}`}
+                  aria-pressed={s.color === c}
                   className="h-4 w-4 rounded-full ring-offset-1"
                   style={{ background: c, boxShadow: s.color === c ? `0 0 0 2px ${c}` : undefined }}
                 />
@@ -138,6 +149,7 @@ export function StatusListEditor({ statuses, onChanged }: { statuses: ProjectSta
               defaultValue={s.name}
               onBlur={(e) => e.target.value !== s.name && rename(s.id, e.target.value)}
               className="h-7 max-w-[180px] text-[13px]"
+              aria-label="Название статуса"
             />
 
             <Select value={s.category} onValueChange={(v) => updateCategory(s.id, v)}>
@@ -153,7 +165,11 @@ export function StatusListEditor({ statuses, onChanged }: { statuses: ProjectSta
               </SelectContent>
             </Select>
 
-            <button onClick={() => setDeleteId(s.id)} className="text-[var(--color-ink-faint)] hover:text-[var(--color-negative)]">
+            <button
+              onClick={() => setDeleteId(s.id)}
+              aria-label={`Удалить статус «${s.name}»`}
+              className="text-[var(--color-ink-faint)] hover:text-[var(--color-negative)]"
+            >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -161,12 +177,14 @@ export function StatusListEditor({ statuses, onChanged }: { statuses: ProjectSta
       </div>
 
       {adding ? (
-        <div className="flex items-center gap-2 rounded-[10px] border border-[var(--color-accent)] p-2">
+        <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-accent)] p-2">
           <div className="flex items-center gap-1">
             {PALETTE.map((c) => (
               <button
                 key={c}
                 onClick={() => setNewColor(c)}
+                aria-label={`Цвет ${c}`}
+                aria-pressed={newColor === c}
                 className="h-4 w-4 rounded-full"
                 style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px ${c}` : undefined }}
               />

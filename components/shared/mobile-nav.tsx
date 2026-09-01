@@ -25,9 +25,10 @@ export function MobileNav() {
           <Link
             key={item.href}
             href={item.href}
+            aria-current={active ? "page" : undefined}
             className={cn(
-              "flex flex-1 flex-col items-center gap-0.5 rounded-[10px] py-1.5 text-[10px] font-medium",
-              active ? "text-[var(--color-accent)]" : "text-[var(--color-ink-muted)]",
+              "mx-0.5 flex flex-1 flex-col items-center gap-0.5 rounded-[var(--radius-sm)] py-1.5 text-[length:var(--text-caption)] font-medium transition-colors",
+              active ? "bg-[var(--color-accent-soft)] text-[var(--color-accent-ink)]" : "text-[var(--color-ink-muted)]",
             )}
           >
             <Icon className="h-5 w-5" />

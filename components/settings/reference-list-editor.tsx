@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SectionHeading } from "@/components/ui/section-heading";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -84,10 +85,7 @@ export function ReferenceListEditor({
 
   return (
     <div className="flex flex-col gap-3">
-      <div>
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">{title}</p>
-        <p className="text-[12.5px] text-[var(--color-ink-muted)]">{description}</p>
-      </div>
+      <SectionHeading title={title} description={description} />
 
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (

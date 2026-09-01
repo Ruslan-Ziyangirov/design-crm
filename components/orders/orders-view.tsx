@@ -92,8 +92,8 @@ export function OrdersView({ orders, projectStatuses, paymentStatuses, serviceTy
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">Заказы</h1>
-          <p className="text-[13px] text-[var(--color-ink-muted)]">Все проекты студии в одном месте</p>
+          <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">Заказы</h1>
+          <p className="text-[length:var(--text-body)] text-[var(--color-ink-muted)]">Все проекты студии в одном месте</p>
         </div>
         <Button onClick={() => setCreateOpen(true)} className="gap-1.5">
           <Plus className="h-4 w-4" />

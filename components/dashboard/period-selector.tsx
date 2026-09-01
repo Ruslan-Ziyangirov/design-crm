@@ -33,7 +33,7 @@ export function PeriodSelector() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Select value={period} onValueChange={(v) => update("period", v)}>
-        <SelectTrigger className="w-[190px]">
+        <SelectTrigger className="w-[190px] rounded-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -46,7 +46,7 @@ export function PeriodSelector() {
       </Select>
 
       <Select value={compare} onValueChange={(v) => update("compare", v)}>
-        <SelectTrigger className="w-[220px]">
+        <SelectTrigger className="w-[220px] rounded-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

@@ -16,7 +16,7 @@ const TooltipContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 rounded-[8px] bg-[var(--color-ink)] px-2.5 py-1.5 text-[12px] text-[var(--color-canvas)] shadow-md",
+        "z-50 rounded-[var(--radius-sm)] bg-[var(--color-ink)] px-2.5 py-1.5 text-[12px] text-[var(--color-canvas)] shadow-md animate-fade-in",
         className,
       )}
       {...props}

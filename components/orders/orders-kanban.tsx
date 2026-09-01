@@ -31,10 +31,18 @@ function KanbanCard({ order, onEdit }: { order: OrderWithRelations; onEdit: (id:
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+      role="button"
+      tabIndex={0}
       onClick={() => !isDragging && onEdit(order.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onEdit(order.id);
+        }
+      }}
       style={transform ? { transform: `translate(${transform.x}px, ${transform.y}px)`, zIndex: 10 } : undefined}
       className={cn(
-        "cursor-grab rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-soft)] active:cursor-grabbing",
+        "cursor-grab rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-soft)] transition-[box-shadow,transform] hover:shadow-[var(--shadow-lifted)] active:scale-[0.98] active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]",
         isDragging && "opacity-60",
       )}
     >
@@ -73,7 +81,7 @@ function KanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex w-[260px] shrink-0 flex-col rounded-[14px] border border-[var(--color-border)] bg-black/[0.015] p-2.5",
+        "flex w-[260px] shrink-0 flex-col rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-black/[0.015] p-2.5 transition-colors",
         isOver && "ring-2 ring-[var(--color-accent)]",
       )}
     >

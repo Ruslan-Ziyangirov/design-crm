@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SectionHeading } from "@/components/ui/section-heading";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -72,19 +73,33 @@ export function PaymentStatusEditor({ statuses, onChanged }: { statuses: Payment
 
   return (
     <div className="flex flex-col gap-3">
-      <div>
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">Статусы оплаты</p>
-      </div>
+      <SectionHeading title="Статусы оплаты" />
       <div className="flex flex-col gap-1.5">
         {statuses.map((s) => (
-          <div key={s.id} className="flex items-center gap-2 rounded-[10px] border border-[var(--color-border)] p-2">
+          <div key={s.id} className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] p-2">
             <div className="flex items-center gap-1">
               {PALETTE.map((c) => (
-                <button key={c} onClick={() => updateColor(s.id, c)} className="h-4 w-4 rounded-full" style={{ background: c, boxShadow: s.color === c ? `0 0 0 2px ${c}` : undefined }} />
+                <button
+                  key={c}
+                  onClick={() => updateColor(s.id, c)}
+                  aria-label={`Цвет ${c}`}
+                  aria-pressed={s.color === c}
+                  className="h-4 w-4 rounded-full"
+                  style={{ background: c, boxShadow: s.color === c ? `0 0 0 2px ${c}` : undefined }}
+                />
               ))}
             </div>
-            <Input defaultValue={s.name} onBlur={(e) => e.target.value !== s.name && rename(s.id, e.target.value)} className="h-7 max-w-[220px] text-[13px]" />
-            <button onClick={() => setDeleteId(s.id)} className="ml-auto text-[var(--color-ink-faint)] hover:text-[var(--color-negative)]">
+            <Input
+              defaultValue={s.name}
+              onBlur={(e) => e.target.value !== s.name && rename(s.id, e.target.value)}
+              className="h-7 max-w-[220px] text-[13px]"
+              aria-label="Название статуса оплаты"
+            />
+            <button
+              onClick={() => setDeleteId(s.id)}
+              aria-label={`Удалить статус оплаты «${s.name}»`}
+              className="ml-auto text-[var(--color-ink-faint)] hover:text-[var(--color-negative)]"
+            >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -92,10 +107,17 @@ export function PaymentStatusEditor({ statuses, onChanged }: { statuses: Payment
       </div>
 
       {adding ? (
-        <div className="flex items-center gap-2 rounded-[10px] border border-[var(--color-accent)] p-2">
+        <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-accent)] p-2">
           <div className="flex items-center gap-1">
             {PALETTE.map((c) => (
-              <button key={c} onClick={() => setNewColor(c)} className="h-4 w-4 rounded-full" style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px ${c}` : undefined }} />
+              <button
+                key={c}
+                onClick={() => setNewColor(c)}
+                aria-label={`Цвет ${c}`}
+                aria-pressed={newColor === c}
+                className="h-4 w-4 rounded-full"
+                style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px ${c}` : undefined }}
+              />
             ))}
           </div>
           <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Название" className="h-7 max-w-[200px] text-[13px]" onKeyDown={(e) => e.key === "Enter" && handleAdd()} />

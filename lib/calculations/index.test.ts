@@ -5,6 +5,7 @@ import {
   calcAverageCheck,
   calcChangePercent,
   calcProfitForecast,
+  findUnpaidStartedOrders,
   isOverdue,
   isExcludedFromRevenue,
   aggregateOrders,
@@ -136,6 +137,35 @@ describe("isExcludedFromRevenue", () => {
   it("прочие заказы не исключаются", () => {
     expect(isExcludedFromRevenue({ statusCategory: "active" })).toBe(false);
     expect(isExcludedFromRevenue({ statusCategory: "done" })).toBe(false);
+  });
+});
+
+describe("findUnpaidStartedOrders", () => {
+  it("находит заказы с датой начала и нулевой оплатой", () => {
+    const orders = [
+      { id: "1", startDate: new Date("2026-07-01"), paymentReceived: 0, statusCategory: "active" as const },
+      { id: "2", startDate: new Date("2026-07-10"), paymentReceived: 5000, statusCategory: "active" as const },
+      { id: "3", startDate: null, paymentReceived: 0, statusCategory: "active" as const },
+    ];
+    const result = findUnpaidStartedOrders(orders);
+    expect(result.map((o) => o.id)).toEqual(["1"]);
+  });
+
+  it("исключает отменённые и архивные заказы", () => {
+    const orders = [
+      { id: "1", startDate: new Date("2026-07-01"), paymentReceived: 0, statusCategory: "cancelled" as const },
+      { id: "2", startDate: new Date("2026-07-01"), paymentReceived: 0, statusCategory: "archived" as const },
+    ];
+    expect(findUnpaidStartedOrders(orders)).toEqual([]);
+  });
+
+  it("сортирует по дате начала по возрастанию (самые давние — первые)", () => {
+    const orders = [
+      { id: "recent", startDate: new Date("2026-07-15"), paymentReceived: 0, statusCategory: "active" as const },
+      { id: "oldest", startDate: new Date("2026-06-01"), paymentReceived: 0, statusCategory: "active" as const },
+      { id: "middle", startDate: new Date("2026-06-20"), paymentReceived: 0, statusCategory: "active" as const },
+    ];
+    expect(findUnpaidStartedOrders(orders).map((o) => o.id)).toEqual(["oldest", "middle", "recent"]);
   });
 });
 

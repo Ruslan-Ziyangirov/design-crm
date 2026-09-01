@@ -20,9 +20,9 @@ export function FunnelCard({ stages }: { stages: Stage[] }) {
         {stages.map((s) => (
           <div key={s.name} className="flex items-center gap-3">
             <span className="w-[128px] shrink-0 truncate text-[12.5px] text-[var(--color-ink-muted)]">{s.name}</span>
-            <div className="h-6 flex-1 overflow-hidden rounded-[6px] bg-black/[0.04]">
+            <div className="h-6 flex-1 overflow-hidden rounded-full bg-black/[0.04]">
               <div
-                className="h-full rounded-[6px] transition-all"
+                className="h-full rounded-full transition-all"
                 style={{ width: `${(s.count / max) * 100}%`, background: s.color }}
               />
             </div>

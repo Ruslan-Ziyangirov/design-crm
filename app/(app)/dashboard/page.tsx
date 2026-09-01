@@ -3,7 +3,7 @@ import { getOrdersFull, getReferenceData, toCalcOrder, getProfitPlan } from "@/l
 import { db } from "@/lib/db";
 import { clients } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { aggregateOrders } from "@/lib/calculations";
+import { aggregateOrders, findUnpaidStartedOrders } from "@/lib/calculations";
 import { buildDashboard, buildCurrentYearMonths, resolvePeriod, type PeriodKey } from "@/lib/dashboard/build";
 import { PeriodSelector } from "@/components/dashboard/period-selector";
 import { KpiCard } from "@/components/dashboard/kpi-card";
@@ -13,6 +13,7 @@ import { DistributionPieChart } from "@/components/dashboard/distribution-pie-ch
 import { AverageCheckChart } from "@/components/dashboard/average-check-chart";
 import { CurrentYearProfitChart } from "@/components/dashboard/current-year-profit-chart";
 import { FunnelCard } from "@/components/dashboard/funnel-card";
+import { UnpaidStartedCard } from "@/components/dashboard/unpaid-started-card";
 import { BestMonthsCard } from "@/components/dashboard/best-months-card";
 import { TrendsCard } from "@/components/dashboard/trends-card";
 import { ProfitPlanCard } from "@/components/dashboard/profit-plan-card";
@@ -73,12 +74,24 @@ export default async function DashboardPage({
     profit: b.financials.profit,
   }));
 
+  // ---- Начали работу, но не оплатили ----
+  const ordersFullById = new Map(ordersFull.map((o) => [o.id, o]));
+  const unpaidStartedOrders = findUnpaidStartedOrders(calcOrders)
+    .map((o) => ordersFullById.get(o.id))
+    .filter((o) => o !== undefined)
+    .map((o) => ({
+      id: o.id,
+      title: o.title,
+      clientName: o.client?.name ?? "Без клиента",
+      daysAgo: Math.floor((now.getTime() - new Date(o.startDate!).getTime()) / 86400000),
+    }));
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">Дашборд</h1>
-          <p className="text-[13px] text-[var(--color-ink-muted)]">Ключевые показатели вашей студии</p>
+          <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">Дашборд</h1>
+          <p className="text-[length:var(--text-body)] text-[var(--color-ink-muted)]">Ключевые показатели вашей студии</p>
         </div>
         <PeriodSelector />
       </div>
@@ -102,11 +115,11 @@ export default async function DashboardPage({
 
       <ProfitPlanCard plan={profitPlan?.targetProfit ?? null} actual={currentMonthProfit} now={now} />
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <RevenueChart data={chartData} />
-        </div>
+      <RevenueChart data={chartData} />
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <FunnelCard stages={funnel} />
+        <UnpaidStartedCard orders={unpaidStartedOrders} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

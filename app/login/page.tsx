@@ -44,31 +44,51 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4">
-      <div className="w-full max-w-sm animate-fade-in">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--color-canvas)] px-4">
+      {/* Едва заметный брендовый фон — акцентное пятно + линия горизонта, отсылка к студийному "холсту" */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full opacity-[0.06]"
+        style={{ background: "radial-gradient(circle, var(--color-accent) 0%, transparent 70%)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-52 -left-32 h-[420px] w-[420px] rounded-full opacity-[0.05]"
+        style={{ background: "radial-gradient(circle, var(--color-info) 0%, transparent 70%)" }}
+      />
+
+      <div className="relative w-full max-w-sm animate-fade-in">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-[var(--color-accent)] text-white shadow-[var(--shadow-soft)]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white shadow-[var(--shadow-lifted)]">
             <Palette className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="font-display text-xl font-semibold text-[var(--color-ink)]">Личная CRM</h1>
-            <p className="text-[13px] text-[var(--color-ink-muted)]">Клиенты, заказы и финансы студии</p>
+            <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">
+              Личная CRM
+            </h1>
+            <p className="text-[length:var(--text-body-sm)] text-[var(--color-ink-muted)]">
+              Клиенты, заказы и финансы студии
+            </p>
           </div>
         </div>
 
         <Card className="p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="owner@studio.local" {...register("email")} />
+              <Input id="email" type="email" placeholder="owner@studio.local" autoComplete="email" {...register("email")} />
               {errors.email && <p className="text-[12px] text-[var(--color-negative)]">{errors.email.message}</p>}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="password">Пароль</Label>
-              <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+              <Input id="password" type="password" placeholder="••••••••" autoComplete="current-password" {...register("password")} />
               {errors.password && <p className="text-[12px] text-[var(--color-negative)]">{errors.password.message}</p>}
             </div>
-            {error && <p className="text-[13px] text-[var(--color-negative)]">{error}</p>}
+            {error && (
+              <p role="alert" className="rounded-[var(--radius-sm)] bg-[var(--color-negative-soft)] px-3 py-2 text-[13px] text-[var(--color-negative)]">
+                {error}
+              </p>
+            )}
             <Button type="submit" disabled={loading} className="mt-2 w-full">
               {loading ? "Входим..." : "Войти"}
             </Button>

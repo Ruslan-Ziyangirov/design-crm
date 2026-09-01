@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -44,9 +45,32 @@ interface Props {
   sources: Source[];
   statuses: ProjectStatus[];
   paymentStatuses: PaymentStatus[];
+  availableYears: number[];
+  selectedYear: number | null;
 }
 
-export function AnalyticsView({ monthlyTable, overallStats, orders, serviceTypes, sources, statuses, paymentStatuses }: Props) {
+export function AnalyticsView({
+  monthlyTable,
+  overallStats,
+  orders,
+  serviceTypes,
+  sources,
+  statuses,
+  paymentStatuses,
+  availableYears,
+  selectedYear,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  function setYear(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "all") params.delete("year");
+    else params.set("year", value);
+    router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ""}`);
+  }
+
   const [serviceFilter, setServiceFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -74,9 +98,24 @@ export function AnalyticsView({ monthlyTable, overallStats, orders, serviceTypes
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">Аналитика</h1>
-        <p className="text-[13px] text-[var(--color-ink-muted)]">Подробный разбор показателей студии</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">Аналитика</h1>
+          <p className="text-[length:var(--text-body)] text-[var(--color-ink-muted)]">Подробный разбор показателей студии</p>
+        </div>
+        <Select value={selectedYear ? String(selectedYear) : "all"} onValueChange={setYear}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">За всё время</SelectItem>
+            {availableYears.map((y) => (
+              <SelectItem key={y} value={String(y)}>
+                {y} год
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -134,10 +173,13 @@ export function AnalyticsView({ monthlyTable, overallStats, orders, serviceTypes
         </Select>
       </div>
 
+      <p className="text-[length:var(--text-body-sm)] text-[var(--color-ink-muted)]">
+        Показатели {selectedYear ? `за ${selectedYear} год` : "за всё время"}
+      </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <StatBox label="Выручка (всего)" value={formatMoney(overallStats.revenue)} />
-        <StatBox label="Расходы (всего)" value={formatMoney(overallStats.expenses)} />
-        <StatBox label="Прибыль (всего)" value={formatMoney(overallStats.profit)} accent="positive" />
+        <StatBox label="Выручка" value={formatMoney(overallStats.revenue)} />
+        <StatBox label="Расходы" value={formatMoney(overallStats.expenses)} />
+        <StatBox label="Прибыль" value={formatMoney(overallStats.profit)} accent="positive" />
         <StatBox label="Маржинальность" value={`${overallStats.margin.toFixed(1)}%`} />
         <StatBox label="Средний чек" value={formatMoney(overallStats.averageCheck)} />
         <StatBox label="Заказов всего" value={String(overallStats.orderCount)} />
@@ -150,7 +192,7 @@ export function AnalyticsView({ monthlyTable, overallStats, orders, serviceTypes
 
       <Card>
         <CardHeader>
-          <CardTitle>Сравнение месяцев</CardTitle>
+          <CardTitle>{selectedYear ? `Сравнение месяцев — ${selectedYear} год` : "Сравнение месяцев (последние 12)"}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">

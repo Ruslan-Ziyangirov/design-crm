@@ -183,6 +183,9 @@ export function ImportWizard({ open, onOpenChange, onDone }: { open: boolean; on
     }
   }
 
+  const STEP_LABELS = { upload: "Загрузка файла", map: "Сопоставление колонок", preview: "Проверка и импорт" } as const;
+  const STEP_INDEX = { upload: 1, map: 2, preview: 3 } as const;
+
   return (
     <Dialog
       open={open}
@@ -197,9 +200,23 @@ export function ImportWizard({ open, onOpenChange, onDone }: { open: boolean; on
           <DialogDescription>Поддерживаются файлы CSV и Excel (.xlsx)</DialogDescription>
         </DialogHeader>
 
+        <div className="mb-1 flex items-center gap-2">
+          <div className="flex gap-1">
+            {(["upload", "map", "preview"] as const).map((s) => (
+              <span
+                key={s}
+                className={`h-1.5 w-6 rounded-full transition-colors ${STEP_INDEX[s] <= STEP_INDEX[step] ? "bg-[var(--color-accent)]" : "bg-[var(--color-border)]"}`}
+              />
+            ))}
+          </div>
+          <p className="text-[12px] text-[var(--color-ink-faint)]">
+            Шаг {STEP_INDEX[step]} из 3 · {STEP_LABELS[step]}
+          </p>
+        </div>
+
         {step === "upload" && (
           <div
-            className="flex flex-col items-center justify-center gap-3 rounded-[14px] border-2 border-dashed border-[var(--color-border-strong)] py-16 cursor-pointer hover:bg-black/[0.015]"
+            className="flex flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border-2 border-dashed border-[var(--color-border-strong)] py-16 cursor-pointer transition-colors hover:bg-black/[0.015]"
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload className="h-8 w-8 text-[var(--color-ink-faint)]" />
@@ -224,7 +241,7 @@ export function ImportWizard({ open, onOpenChange, onDone }: { open: boolean; on
                 <div key={field.key} className="flex flex-col gap-1.5">
                   <label className="text-[12px] text-[var(--color-ink-muted)]">
                     {field.label}
-                    {field.required && "*"}
+                    {field.required && <span className="text-[var(--color-negative)]"> *</span>}
                   </label>
                   <Select
                     value={mapping[field.key] ?? "__none"}
@@ -261,7 +278,7 @@ export function ImportWizard({ open, onOpenChange, onDone }: { open: boolean; on
             <p className="text-[13px] text-[var(--color-ink-muted)]">
               Найдено строк: {previewRows.length}. Для совпадающих заказов выберите действие.
             </p>
-            <div className="max-h-[360px] overflow-y-auto rounded-[10px] border border-[var(--color-border)]">
+            <div className="max-h-[360px] overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--color-border)]">
               <Table>
                 <TableHeader>
                   <TableRow>

@@ -11,8 +11,13 @@ import {
 } from "@/lib/calculations";
 import { AnalyticsView } from "@/components/analytics/analytics-view";
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ year?: string }>;
+}) {
   const userId = await requireUserId();
+  const params = await searchParams;
   const [ordersFull, refs, clientRows] = await Promise.all([
     getOrdersFull(userId),
     getReferenceData(userId),
@@ -22,10 +27,19 @@ export default async function AnalyticsPage() {
   const now = new Date();
   const calcOrders: OrderForCalc[] = ordersFull.map(toCalcOrder);
 
-  // ---- Помесячная таблица сравнения (последние 12 месяцев) ----
+  const selectedYear = params.year && params.year !== "all" ? Number(params.year) : null;
+
+  const earliestYear = calcOrders.reduce(
+    (min, o) => Math.min(min, o.createdAt.getFullYear()),
+    now.getFullYear(),
+  );
+  const availableYears: number[] = [];
+  for (let y = now.getFullYear(); y >= earliestYear; y--) availableYears.push(y);
+
+  // ---- Помесячная таблица: строго Янв-Дек выбранного года, либо последние 12 месяцев ----
   const monthlyTable = [];
   for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const d = selectedYear ? new Date(selectedYear, 11 - i, 1) : new Date(now.getFullYear(), now.getMonth() - i, 1);
     const bucketOrders = calcOrders.filter(
       (o) => o.createdAt.getFullYear() === d.getFullYear() && o.createdAt.getMonth() === d.getMonth(),
     );
@@ -52,10 +66,14 @@ export default async function AnalyticsPage() {
     });
   }
 
-  // ---- Общие показатели (за всё время) ----
-  const overall = aggregateOrders(calcOrders);
+  // ---- Общие показатели: за выбранный год, либо за всё время ----
+  const scopedOrders = selectedYear
+    ? calcOrders.filter((o) => o.createdAt.getFullYear() === selectedYear)
+    : calcOrders;
+
+  const overall = aggregateOrders(scopedOrders);
   const ordersByClient = new Map<string, number>();
-  for (const o of calcOrders) {
+  for (const o of scopedOrders) {
     if (o.statusCategory === "cancelled") continue;
     ordersByClient.set(o.clientId, (ordersByClient.get(o.clientId) ?? 0) + 1);
   }
@@ -63,7 +81,7 @@ export default async function AnalyticsPage() {
   const totalClientsWithOrders = ordersByClient.size;
   const repeatClientPercent = totalClientsWithOrders > 0 ? Math.round((repeatClients / totalClientsWithOrders) * 100) : 0;
 
-  const doneOrders = calcOrders.filter((o) => o.statusCategory === "done" && o.startDate && o.completedDate);
+  const doneOrders = scopedOrders.filter((o) => o.statusCategory === "done" && o.startDate && o.completedDate);
   const avgDurationDays =
     doneOrders.length > 0
       ? Math.round(
@@ -73,7 +91,9 @@ export default async function AnalyticsPage() {
       : 0;
 
   const onTimeCount = doneOrders.filter((o) => !o.deadline || o.completedDate!.getTime() <= o.deadline.getTime()).length;
-  const overdueCount = calcOrders.filter((o) => isOverdue(o, now)).length;
+  const overdueCount = scopedOrders.filter((o) => isOverdue(o, now)).length;
+  // Клиентов — считаем тех, у кого есть хотя бы один заказ в выбранном годе; без фильтра — вся база.
+  const clientCount = selectedYear ? totalClientsWithOrders : clientRows.length;
 
   const overallStats = {
     revenue: overall.revenue,
@@ -82,7 +102,7 @@ export default async function AnalyticsPage() {
     margin: overall.margin,
     averageCheck: overall.averageCheck,
     orderCount: overall.orderCount,
-    clientCount: clientRows.length,
+    clientCount,
     repeatClientPercent,
     avgDurationDays,
     onTimeCount,
@@ -99,6 +119,8 @@ export default async function AnalyticsPage() {
       sources={refs.sources}
       statuses={refs.projectStatuses}
       paymentStatuses={refs.paymentStatuses}
+      availableYears={availableYears}
+      selectedYear={selectedYear}
     />
   );
 }

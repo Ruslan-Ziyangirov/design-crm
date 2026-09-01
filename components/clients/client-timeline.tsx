@@ -19,7 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { formatDateTime } from "@/lib/format";
+import { tintColor } from "@/lib/utils";
 import type { TimelineEvent } from "@/lib/db/schema";
 
 const TYPE_META: Record<string, { label: string; icon: typeof Phone; color: string }> = {
@@ -74,7 +76,7 @@ export function ClientTimeline({ clientId, events, onChanged }: { clientId: stri
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">Таймлайн взаимодействия</p>
+        <SectionHeading title="Таймлайн взаимодействия" />
         <Button size="sm" variant="secondary" onClick={() => setAdding((v) => !v)} className="gap-1.5">
           <Plus className="h-3.5 w-3.5" />
           Добавить событие
@@ -82,7 +84,7 @@ export function ClientTimeline({ clientId, events, onChanged }: { clientId: stri
       </div>
 
       {adding && (
-        <div className="flex flex-col gap-2 rounded-[12px] border border-[var(--color-border)] p-3">
+        <div className="flex flex-col gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] p-3">
           <div className="flex gap-2">
             <Select value={type} onValueChange={setType}>
               <SelectTrigger className="w-[220px]">
@@ -120,7 +122,7 @@ export function ClientTimeline({ clientId, events, onChanged }: { clientId: stri
               <div className="flex flex-col items-center">
                 <span
                   className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-                  style={{ background: `${meta.color}1a`, color: meta.color }}
+                  style={{ background: tintColor(meta.color), color: meta.color }}
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </span>
@@ -133,7 +135,8 @@ export function ClientTimeline({ clientId, events, onChanged }: { clientId: stri
                     <span className="text-[11.5px] text-[var(--color-ink-faint)]">{formatDateTime(e.eventDate)}</span>
                     <button
                       onClick={() => handleDelete(e.id)}
-                      className="opacity-0 transition-opacity group-hover:opacity-100 text-[var(--color-ink-faint)] hover:text-[var(--color-negative)]"
+                      aria-label="Удалить событие"
+                      className="opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 text-[var(--color-ink-faint)] hover:text-[var(--color-negative)]"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>

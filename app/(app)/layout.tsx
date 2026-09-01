@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen bg-[var(--color-canvas)]">
       <Sidebar crmName={user?.crmName ?? "Моя CRM"} ownerName={user?.name ?? "Владелец"} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar />
+        <Topbar ownerName={user?.name ?? "Владелец"} ownerEmail={user?.email ?? ""} />
         <main className="flex-1 overflow-x-hidden px-4 pb-20 pt-5 lg:px-7 lg:pb-7 lg:pt-6">{children}</main>
       </div>
       <MobileNav />

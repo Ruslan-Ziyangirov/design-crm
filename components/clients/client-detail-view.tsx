@@ -95,7 +95,7 @@ export function ClientDetailView({ client }: Props) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">{client.name}</h1>
+            <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">{client.name}</h1>
             <Badge variant={client.status === "active" ? "positive" : client.status === "lost" ? "negative" : "info"}>
               {STATUS_LABELS[client.status]}
             </Badge>

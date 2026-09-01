@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MonthCalendar, type CalendarEvent } from "@/components/calendar/month-calendar";
 import { OrderFormDialog } from "@/components/orders/order-form-dialog";
+import { tintColor } from "@/lib/utils";
 import type { OrderWithRelations } from "@/lib/db/queries";
 
 type EventType = "firstContactDate" | "startDate" | "deadline" | "completedDate";
@@ -47,8 +48,8 @@ export function CalendarPageView({ orders }: { orders: OrderWithRelations[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">Календарь</h1>
-        <p className="text-[13px] text-[var(--color-ink-muted)]">Все важные даты по клиентам и заказам</p>
+        <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">Календарь</h1>
+        <p className="text-[length:var(--text-body)] text-[var(--color-ink-muted)]">Все важные даты по клиентам и заказам</p>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
@@ -56,10 +57,11 @@ export function CalendarPageView({ orders }: { orders: OrderWithRelations[] }) {
           <button
             key={type}
             onClick={() => toggleType(type)}
+            aria-pressed={visibleTypes.includes(type)}
             className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-medium transition-opacity"
             style={{
               borderColor: visibleTypes.includes(type) ? meta.color : "var(--color-border)",
-              background: visibleTypes.includes(type) ? `${meta.color}1a` : "transparent",
+              background: visibleTypes.includes(type) ? tintColor(meta.color) : "transparent",
               color: visibleTypes.includes(type) ? meta.color : "var(--color-ink-faint)",
             }}
           >

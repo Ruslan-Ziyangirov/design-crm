@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, tintColor } from "@/lib/utils";
 
 export interface CalendarEvent {
   id: string;
@@ -59,7 +59,7 @@ export function MonthCalendar({ events }: { events: CalendarEvent[] }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <p className="font-display text-[15px] font-semibold text-[var(--color-ink)]">
+        <p className="font-display text-[length:var(--text-heading-sm)] font-semibold text-[var(--color-ink)]">
           {MONTHS[cursor.getMonth()]} {cursor.getFullYear()}
         </p>
         <div className="flex items-center gap-1.5">
@@ -75,7 +75,7 @@ export function MonthCalendar({ events }: { events: CalendarEvent[] }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-[14px] border border-[var(--color-border)] bg-[var(--color-border)]">
+      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-border)]">
         {WEEKDAYS.map((w) => (
           <div key={w} className="bg-[var(--color-surface)] px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-ink-muted)]">
             {w}
@@ -103,8 +103,8 @@ export function MonthCalendar({ events }: { events: CalendarEvent[] }) {
                         key={e.id}
                         onClick={e.onClick}
                         title={e.label}
-                        className="truncate rounded-[5px] px-1 py-0.5 text-left text-[10.5px] font-medium leading-tight hover:opacity-80"
-                        style={{ background: `${e.color}1a`, color: e.color }}
+                        className="truncate rounded-[6px] px-1 py-0.5 text-left text-[10.5px] font-medium leading-tight transition-opacity hover:opacity-80 focus-visible:opacity-80"
+                        style={{ background: tintColor(e.color), color: e.color }}
                       >
                         {e.label}
                       </button>

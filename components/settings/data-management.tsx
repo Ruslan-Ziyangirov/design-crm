@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Download, Upload, DatabaseBackup, AlertTriangle, FileUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SectionHeading } from "@/components/ui/section-heading";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -21,6 +22,7 @@ export function DataManagement() {
   const router = useRouter();
   const [importOpen, setImportOpen] = useState(false);
   const [wipeOpen, setWipeOpen] = useState(false);
+  const [restoreFile, setRestoreFile] = useState<File | null>(null);
   const restoreInputRef = useRef<HTMLInputElement>(null);
 
   async function handleRestore(file: File) {
@@ -40,6 +42,9 @@ export function DataManagement() {
       router.refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Не удалось восстановить данные");
+    } finally {
+      setRestoreFile(null);
+      if (restoreInputRef.current) restoreInputRef.current.value = "";
     }
   }
 
@@ -55,10 +60,7 @@ export function DataManagement() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">Импорт данных</p>
-        <p className="mb-3 text-[12.5px] text-[var(--color-ink-muted)]">
-          Загрузите существующую таблицу заказов в форматах CSV или Excel
-        </p>
+        <SectionHeading title="Импорт данных" description="Загрузите существующую таблицу заказов в форматах CSV или Excel" className="mb-3" />
         <Button variant="secondary" onClick={() => setImportOpen(true)} className="gap-1.5">
           <FileUp className="h-4 w-4" />
           Импортировать заказы
@@ -66,8 +68,7 @@ export function DataManagement() {
       </div>
 
       <div>
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">Экспорт данных</p>
-        <p className="mb-3 text-[12.5px] text-[var(--color-ink-muted)]">Выгрузите клиентов или заказы в удобном формате</p>
+        <SectionHeading title="Экспорт данных" description="Выгрузите клиентов или заказы в удобном формате" className="mb-3" />
         <div className="flex flex-wrap gap-2">
           {(["clients", "orders"] as const).map((entity) =>
             (["csv", "xlsx", "json"] as const).map((format) => (
@@ -83,10 +84,11 @@ export function DataManagement() {
       </div>
 
       <div>
-        <p className="font-display text-[14px] font-semibold text-[var(--color-ink)]">Резервное копирование</p>
-        <p className="mb-3 text-[12.5px] text-[var(--color-ink-muted)]">
-          Полная копия всех данных CRM в одном файле — для переноса или страховки
-        </p>
+        <SectionHeading
+          title="Резервное копирование"
+          description="Полная копия всех данных CRM в одном файле — для переноса или страховки"
+          className="mb-3"
+        />
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" asChild className="gap-1.5">
             <a href="/api/backup">
@@ -103,17 +105,17 @@ export function DataManagement() {
             type="file"
             accept=".json"
             className="hidden"
-            onChange={(e) => e.target.files?.[0] && handleRestore(e.target.files[0])}
+            onChange={(e) => e.target.files?.[0] && setRestoreFile(e.target.files[0])}
           />
         </div>
       </div>
 
-      <div className="rounded-[12px] border border-[var(--color-negative-soft)] bg-[var(--color-negative-soft)]/40 p-4">
-        <p className="flex items-center gap-1.5 font-display text-[14px] font-semibold text-[var(--color-negative)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-negative-soft)] bg-[var(--color-negative-soft)]/40 p-4">
+        <p className="flex items-center gap-1.5 font-display text-[length:var(--text-heading-sm)] font-semibold text-[var(--color-negative)]">
           <AlertTriangle className="h-4 w-4" />
           Опасная зона
         </p>
-        <p className="mb-3 mt-1 text-[12.5px] text-[var(--color-ink-muted)]">
+        <p className="mb-3 mt-1 text-[length:var(--text-body-sm)] text-[var(--color-ink-muted)]">
           Удаляет всех клиентов, все заказы и историю взаимодействия без возможности восстановления. Справочники
           (услуги, статусы, источники) и настройки сохранятся.
         </p>
@@ -123,6 +125,22 @@ export function DataManagement() {
       </div>
 
       <ImportWizard open={importOpen} onOpenChange={setImportOpen} onDone={() => router.refresh()} />
+
+      <AlertDialog open={!!restoreFile} onOpenChange={(o) => !o && setRestoreFile(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Восстановить из резервной копии?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Файл «{restoreFile?.name}» полностью заменит текущих клиентов, заказы, справочники и профиль. Действие
+              необратимо — если в этом файле не всё, что у вас сейчас есть, часть данных будет потеряна.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Отмена</AlertDialogCancel>
+            <AlertDialogAction onClick={() => restoreFile && handleRestore(restoreFile)}>Восстановить</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={wipeOpen} onOpenChange={setWipeOpen}>
         <AlertDialogContent>

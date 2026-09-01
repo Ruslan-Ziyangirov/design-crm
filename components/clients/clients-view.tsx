@@ -61,8 +61,8 @@ export function ClientsView({ clients }: { clients: ClientRow[] }) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">Клиенты</h1>
-          <p className="text-[13px] text-[var(--color-ink-muted)]">База клиентов вашей студии</p>
+          <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">Клиенты</h1>
+          <p className="text-[length:var(--text-body)] text-[var(--color-ink-muted)]">База клиентов вашей студии</p>
         </div>
         <Button onClick={() => setCreateOpen(true)} className="gap-1.5">
           <Plus className="h-4 w-4" />
@@ -116,23 +116,23 @@ export function ClientsView({ clients }: { clients: ClientRow[] }) {
 
             return (
               <Link key={c.id} href={`/clients/${c.id}`}>
-                <Card className="h-full p-4 transition-shadow hover:shadow-[var(--shadow-lifted)]">
+                <Card className="h-full p-4 transition-[box-shadow,border-color,transform] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-lifted)] active:scale-[0.99]">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="truncate font-display text-[15px] font-semibold text-[var(--color-ink)]">{c.name}</p>
-                      {c.contactName && <p className="truncate text-[12.5px] text-[var(--color-ink-muted)]">{c.contactName}</p>}
+                      <p className="truncate font-display text-[length:var(--text-body-lg)] font-semibold text-[var(--color-ink)]">{c.name}</p>
+                      {c.contactName && <p className="truncate text-[length:var(--text-body-sm)] text-[var(--color-ink-muted)]">{c.contactName}</p>}
                     </div>
                     <Badge variant={STATUS_VARIANT[c.status]}>{STATUS_LABELS[c.status]}</Badge>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-center">
+                  <div className="mt-3 grid grid-cols-2 gap-2 rounded-[var(--radius-sm)] bg-black/[0.02] py-2 text-center">
                     <div>
                       <p className="font-numeric text-[13px] font-semibold text-[var(--color-ink)]">{c.orders.length}</p>
-                      <p className="text-[10.5px] text-[var(--color-ink-faint)]">заказов</p>
+                      <p className="text-[length:var(--text-caption)] text-[var(--color-ink-faint)]">заказов</p>
                     </div>
                     <div>
                       <p className="font-numeric text-[13px] font-semibold text-[var(--color-positive)]">{formatMoney(profit)}</p>
-                      <p className="text-[10.5px] text-[var(--color-ink-faint)]">прибыль</p>
+                      <p className="text-[length:var(--text-caption)] text-[var(--color-ink-faint)]">прибыль</p>
                     </div>
                   </div>
 

@@ -80,6 +80,31 @@ export function isExcludedFromRevenue(order: Pick<OrderForCalc, "statusCategory"
   return order.statusCategory === "cancelled";
 }
 
+export interface UnpaidStartedInput {
+  id: string;
+  startDate: Date | null;
+  paymentReceived: number;
+  statusCategory: OrderStatusCategory;
+}
+
+/**
+ * Заказы, по которым уже начата работа (задана дата начала), но не получено
+ * ни рубля оплаты. Отменённые и архивные заказы не считаются — работа по ним
+ * не идёт. Сортировка — по дате начала по возрастанию: самые давние наверху,
+ * это самые просроченные по оплате.
+ */
+export function findUnpaidStartedOrders<T extends UnpaidStartedInput>(orders: T[]): T[] {
+  return orders
+    .filter(
+      (o) =>
+        o.startDate !== null &&
+        o.paymentReceived === 0 &&
+        o.statusCategory !== "cancelled" &&
+        o.statusCategory !== "archived",
+    )
+    .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
+}
+
 export interface AggregatedFinancials {
   revenue: number;
   expenses: number;

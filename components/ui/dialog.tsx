@@ -40,14 +40,14 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-lifted)] max-h-[90vh] overflow-y-auto",
+          "fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 shadow-[var(--shadow-lifted)] max-h-[90vh] overflow-y-auto data-[state=open]:[animation:materialize-in-centered_180ms_ease-out] data-[state=closed]:[animation:materialize-out-centered_150ms_ease-in]",
           sizeClass,
           className,
         )}
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-5 top-5 rounded-md p-1 text-[var(--color-ink-muted)] opacity-70 transition-opacity hover:opacity-100 hover:bg-black/5 focus:outline-none">
+        <DialogPrimitive.Close className="absolute right-5 top-5 rounded-md p-1 text-[var(--color-ink-muted)] opacity-70 transition-opacity hover:opacity-100 hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]">
           <X className="h-4 w-4" />
           <span className="sr-only">Закрыть</span>
         </DialogPrimitive.Close>
@@ -70,7 +70,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("font-display text-lg font-semibold text-[var(--color-ink)]", className)}
+    className={cn("font-display text-[length:var(--text-heading-sm)] font-semibold text-[var(--color-ink)]", className)}
     {...props}
   />
 ));

@@ -36,8 +36,8 @@ export function SettingsView({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="font-display text-[22px] font-semibold text-[var(--color-ink)]">Настройки</h1>
-        <p className="text-[13px] text-[var(--color-ink-muted)]">Профиль, справочники и управление данными</p>
+        <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">Настройки</h1>
+        <p className="text-[length:var(--text-body)] text-[var(--color-ink-muted)]">Профиль, справочники и управление данными</p>
       </div>
 
       <Tabs defaultValue="general">
