@@ -156,6 +156,8 @@ export const orders = pgTable(
     }),
     description: text("description"),
 
+    /** Согласованная сумма заказа — используется, чтобы посчитать остаток долга (сумма − получено). */
+    price: doublePrecision("price").notNull().default(0),
     paymentReceived: doublePrecision("payment_received").notNull().default(0),
     expenses: doublePrecision("expenses").notNull().default(0),
     /** Ручной override прибыли. null = считать автоматически (paymentReceived - expenses). */

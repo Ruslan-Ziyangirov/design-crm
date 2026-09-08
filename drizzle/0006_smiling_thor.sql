@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "price" double precision DEFAULT 0 NOT NULL;

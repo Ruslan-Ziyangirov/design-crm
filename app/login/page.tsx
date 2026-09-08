@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Palette } from "lucide-react";
+import { Logo } from "@/components/shared/logo";
 import type { z } from "zod";
 
 type FormValues = z.infer<typeof loginSchema>;
@@ -59,17 +59,10 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-sm animate-fade-in">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white shadow-[var(--shadow-lifted)]">
-            <Palette className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="font-display text-[length:var(--text-heading-lg)] font-semibold text-[var(--color-ink)]">
-              Личная CRM
-            </h1>
-            <p className="text-[length:var(--text-body-sm)] text-[var(--color-ink-muted)]">
-              Клиенты, заказы и финансы студии
-            </p>
-          </div>
+          <Logo className="h-8 w-auto text-[var(--color-ink)]" />
+          <p className="text-[length:var(--text-body-sm)] text-[var(--color-ink-muted)]">
+            Клиенты, заказы и финансы студии
+          </p>
         </div>
 
         <Card className="p-6">

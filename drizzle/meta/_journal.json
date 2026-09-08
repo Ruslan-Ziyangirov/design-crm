@@ -43,6 +43,13 @@
       "when": 1784663263212,
       "tag": "0005_enable_rls_profit_plans",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788878695257,
+      "tag": "0006_smiling_thor",
+      "breakpoints": true
     }
   ]
 }

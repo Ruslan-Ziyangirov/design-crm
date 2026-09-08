@@ -26,6 +26,7 @@ export function buildOrderRows(orders: OrderWithRelations[]) {
     Заказ: o.title,
     Клиент: o.client?.name ?? "",
     Услуга: o.serviceType?.name ?? "",
+    Стоимость: o.price,
     Выручка: o.paymentReceived,
     Расходы: o.expenses,
     Прибыль: calcProfit(o),

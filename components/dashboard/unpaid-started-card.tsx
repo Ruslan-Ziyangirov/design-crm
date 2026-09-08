@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { CircleDollarSign } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { OrderFormDialog } from "@/components/orders/order-form-dialog";
+import { formatMoney } from "@/lib/format";
 
 export interface UnpaidStartedOrder {
   id: string;
   title: string;
   clientName: string;
   daysAgo: number;
+  owedAmount: number;
 }
 
 function daysAgoLabel(days: number): string {
@@ -48,7 +50,12 @@ export function UnpaidStartedCard({ orders }: { orders: UnpaidStartedOrder[] }) 
               <span className="block truncate text-[13px] font-medium text-[var(--color-ink)]">{o.title}</span>
               <span className="block truncate text-[11.5px] text-[var(--color-ink-faint)]">{o.clientName}</span>
             </span>
-            <span className="shrink-0 text-[11.5px] font-medium text-[var(--color-warning)]">{daysAgoLabel(o.daysAgo)}</span>
+            <span className="flex shrink-0 flex-col items-end gap-0.5">
+              {o.owedAmount > 0 && (
+                <span className="font-numeric text-[13px] font-semibold text-[var(--color-ink)]">{formatMoney(o.owedAmount)}</span>
+              )}
+              <span className="text-[11.5px] font-medium text-[var(--color-warning)]">{daysAgoLabel(o.daysAgo)}</span>
+            </span>
           </button>
         ))}
       </CardContent>

@@ -9,9 +9,9 @@ import {
   CalendarDays,
   BarChart3,
   Settings,
-  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/shared/logo";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Дашборд", icon: LayoutDashboard },
@@ -22,21 +22,13 @@ const NAV_ITEMS = [
   { href: "/settings", label: "Настройки", icon: Settings },
 ];
 
-export function Sidebar({ crmName, ownerName }: { crmName: string; ownerName: string }) {
+export function Sidebar({ ownerName }: { ownerName: string }) {
   const pathname = usePathname();
 
   return (
     <aside className="hidden w-[228px] shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-4 lg:flex">
-      <div className="mb-6 flex items-center gap-2.5 px-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)] text-white">
-          <Palette className="h-4 w-4" />
-        </div>
-        <div className="min-w-0">
-          <p className="truncate font-display text-[14px] font-semibold leading-tight text-[var(--color-ink)]">
-            {crmName}
-          </p>
-          <p className="truncate text-[11px] text-[var(--color-ink-muted)]">Личная CRM</p>
-        </div>
+      <div className="mb-6 px-3.5">
+        <Logo className="h-5 w-auto text-[var(--color-ink)]" />
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">

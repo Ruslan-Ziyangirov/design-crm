@@ -91,6 +91,7 @@ export default async function DashboardPage({
       title: o.title,
       clientName: o.client?.name ?? "Без клиента",
       daysAgo: Math.floor((now.getTime() - new Date(o.startDate!).getTime()) / 86400000),
+      owedAmount: Math.max(o.price - o.paymentReceived, 0),
     }));
 
   return (

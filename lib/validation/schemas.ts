@@ -30,6 +30,7 @@ export const orderSchema = z.object({
   serviceTypeId: z.string().optional().nullable(),
   description: z.string().max(5000).optional().or(z.literal("")),
 
+  price: z.coerce.number().min(0).default(0),
   paymentReceived: z.coerce.number().min(0).default(0),
   expenses: z.coerce.number().min(0).default(0),
   profitOverride: z.coerce.number().nullable().optional(),
