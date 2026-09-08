@@ -50,6 +50,13 @@
       "when": 1788878695257,
       "tag": "0006_smiling_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788879951117,
+      "tag": "0007_wealthy_drax",
+      "breakpoints": true
     }
   ]
 }

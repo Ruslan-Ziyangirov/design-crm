@@ -71,7 +71,6 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
     defaultValues: {
       clientId: defaultClientId || "",
       title: "",
-      price: 0,
       paymentReceived: 0,
       expenses: 0,
       profitOverride: null,
@@ -108,7 +107,6 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
             title: order.title,
             serviceTypeId: order.serviceTypeId,
             description: order.description || "",
-            price: order.price,
             paymentReceived: order.paymentReceived,
             expenses: order.expenses,
             profitOverride: order.profitOverride ?? null,
@@ -135,7 +133,6 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
             statusId: psRes.find((s: ProjectStatus) => s.category === "active")?.id ?? psRes[0]?.id,
             paymentStatusId: payRes.find((s: PaymentStatus) => s.name === "Не оплачено")?.id ?? payRes[0]?.id,
             sourceId: srcRes[0]?.id,
-            price: 0,
             paymentReceived: 0,
             expenses: 0,
             profitOverride: null,
@@ -157,10 +154,8 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, orderId]);
 
-  const price = Number(watch("price")) || 0;
   const paymentReceived = Number(watch("paymentReceived")) || 0;
   const expenses = Number(watch("expenses")) || 0;
-  const owed = Math.max(price - paymentReceived, 0);
   const reviewReceived = watch("reviewReceived");
   const profitOverride = watch("profitOverride");
   const manualProfit = profitOverride !== null && profitOverride !== undefined;
@@ -325,11 +320,7 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 rounded-[12px] border border-[var(--color-border)] bg-black/[0.015] p-3">
-              <div className="flex flex-col gap-1.5">
-                <Label>Стоимость, ₽</Label>
-                <Input type="number" step="0.01" {...register("price")} />
-              </div>
+            <div className="grid grid-cols-2 gap-3 rounded-[12px] border border-[var(--color-border)] bg-black/[0.015] p-3">
               <div className="flex flex-col gap-1.5">
                 <Label>Выручка, ₽</Label>
                 <Input type="number" step="0.01" {...register("paymentReceived")} />
@@ -338,12 +329,7 @@ export function OrderFormDialog({ open, onOpenChange, orderId, defaultClientId, 
                 <Label>Расход, ₽</Label>
                 <Input type="number" step="0.01" {...register("expenses")} />
               </div>
-              {owed > 0 && (
-                <p className="col-span-3 text-[11.5px] text-[var(--color-warning)]">
-                  Остаток к оплате: <span className="font-numeric font-semibold">{formatMoney(owed)}</span>
-                </p>
-              )}
-              <div className="col-span-3 flex flex-col gap-2 border-t border-[var(--color-border)] pt-3">
+              <div className="col-span-2 flex flex-col gap-2 border-t border-[var(--color-border)] pt-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[12px] text-[var(--color-ink-muted)]">Прибыль</span>
                   <div className="flex items-center gap-2">

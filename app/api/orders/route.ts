@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
         title: parsed.title,
         serviceTypeId: parsed.serviceTypeId || null,
         description: parsed.description || "",
-        price: parsed.price,
         paymentReceived: parsed.paymentReceived,
         expenses: parsed.expenses,
         profitOverride: parsed.profitOverride ?? null,
