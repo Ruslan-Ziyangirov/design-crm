@@ -8,7 +8,7 @@ import {
   type OrderForCalc,
   type MonthBucket,
 } from "@/lib/calculations";
-import type { ProjectStatus, Source, ServiceType, Client } from "@/lib/db/schema";
+import type { Source, ServiceType, Client } from "@/lib/db/schema";
 
 export type PeriodKey =
   | "current_month"
@@ -78,7 +78,6 @@ function filterByRange(orders: OrderForCalc[], range: PeriodRange): OrderForCalc
 export function buildDashboard({
   orders,
   clients,
-  statuses,
   sources,
   serviceTypes,
   range,
@@ -87,7 +86,6 @@ export function buildDashboard({
 }: {
   orders: OrderForCalc[];
   clients: Pick<Client, "id" | "createdAt">[];
-  statuses: ProjectStatus[];
   sources: Source[];
   serviceTypes: ServiceType[];
   range: PeriodRange;
@@ -189,17 +187,6 @@ export function buildDashboard({
   const bySource = distributionBy(orders, (o) => (o.sourceId ? sourceMap[o.sourceId] ?? "Другое" : "Не указан"));
   const byService = distributionBy(orders, (o) => (o.serviceTypeId ? serviceMap[o.serviceTypeId] ?? "Другое" : "Другое"));
 
-  // ---- Воронка: активные + завершённые статусы в порядке пайплайна ----
-  const pipelineStatuses = [...statuses]
-    .filter((s) => s.category === "active" || s.category === "done")
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-  const activeOrdersOnly = orders.filter((o) => o.statusCategory !== "cancelled" && o.statusCategory !== "archived");
-  const funnel = pipelineStatuses.map((s) => ({
-    name: s.name,
-    color: s.color,
-    count: activeOrdersOnly.filter((o) => o.statusId === s.id).length,
-  }));
-
   return {
     kpis,
     monthBuckets,
@@ -210,7 +197,6 @@ export function buildDashboard({
     trendDirectionsYoY,
     bySource,
     byService,
-    funnel,
   };
 }
 

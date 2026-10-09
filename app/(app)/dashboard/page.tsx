@@ -41,7 +41,6 @@ export default async function DashboardPage({
   const dashboard = buildDashboard({
     orders: calcOrders,
     clients: clientRows,
-    statuses: refs.projectStatuses,
     sources: refs.sources,
     serviceTypes: refs.serviceTypes,
     range,
@@ -49,7 +48,7 @@ export default async function DashboardPage({
     now,
   });
 
-  const { kpis, monthBuckets, bestMonths, trends, trendDirections, trendsYoY, trendDirectionsYoY, bySource, byService, funnel } =
+  const { kpis, monthBuckets, bestMonths, trends, trendDirections, trendsYoY, trendDirectionsYoY, bySource, byService } =
     dashboard;
 
   const chartData = monthBuckets.map((b) => ({
@@ -94,6 +93,26 @@ export default async function DashboardPage({
       owedAmount: o.paymentReceived,
     }));
 
+  // ---- Воронка проектов: активные статусы (без "Готово"), реальные заказы ----
+  const pipelineStatuses = [...refs.projectStatuses]
+    .filter((s) => s.category === "active")
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+  const pipeline = pipelineStatuses
+    .map((s) => ({
+      id: s.id,
+      name: s.name,
+      color: s.color,
+      orders: ordersFull
+        .filter((o) => o.statusId === s.id)
+        .map((o) => ({
+          id: o.id,
+          title: o.title,
+          clientName: o.client?.name ?? "Без клиента",
+          amount: o.paymentReceived,
+        })),
+    }))
+    .filter((s) => s.orders.length > 0);
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -126,7 +145,7 @@ export default async function DashboardPage({
       <RevenueChart data={chartData} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <FunnelCard stages={funnel} />
+        <FunnelCard stages={pipeline} />
         <UnpaidStartedCard orders={unpaidStartedOrders} />
       </div>
 
